@@ -1,0 +1,2797 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>MONOLITH PRO — Генподряд по строительству ЦОД Tier IV под ключ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <!-- Three.js WebGL PBR Engine -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    :root {
+      /* 2026 Warm Architectural Daylight & Mineral Studio Palette */
+      --bg-stone: #ECE7DF;
+      --bg-alabaster: #F6F3EE;
+      --bg-glass: rgba(247, 244, 238, 0.88);
+      --bg-glass-strong: rgba(252, 250, 246, 0.95);
+      --bg-dark-card: #161514;
+      --ink: #161514;
+      --ink-secondary: #4E4B45;
+      --ink-muted: #78736A;
+      --border-hairline: rgba(22, 21, 20, 0.11);
+      --border-strong: rgba(22, 21, 20, 0.24);
+      --accent-copper: #B55422;
+      --accent-terracotta: #C83A22;
+      --accent-jade: #1D6844;
+      --accent-cobalt: #1C4E80;
+      --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      background-color: var(--bg-stone);
+      color: var(--ink);
+      font-family: var(--font-sans);
+      font-variant-numeric: tabular-nums;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      scroll-behavior: smooth;
+      overflow-x: hidden;
+    }
+
+    body {
+      background-color: var(--bg-stone);
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    /* =================================================================
+       FIXED 3D WEBGL VIEWPORT (FLICKER-FREE STUDIO DAYLIGHT)
+       ================================================================= */
+    #webgl-viewport {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .daylight-vignette {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 65% 48%, rgba(236,231,223,0) 28%, rgba(230,224,214,0.68) 100%),
+        linear-gradient(90deg, rgba(236,231,223,0.92) 0%, rgba(236,231,223,0.28) 46%, rgba(236,231,223,0.0) 100%);
+    }
+
+    /* =================================================================
+       TOP ARCHITECTURAL GLASS HEADER
+       ================================================================= */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      z-index: 300;
+      background: rgba(246, 243, 238, 0.86);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid var(--border-hairline);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 36px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: -0.025em;
+      color: var(--ink);
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      width: 10px;
+      height: 10px;
+      background: var(--accent-copper);
+      border-radius: 2px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--ink-secondary);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent-copper);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-cta {
+      background: var(--ink);
+      color: var(--bg-alabaster);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: 980px;
+      text-decoration: none;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .header-cta:hover {
+      background: var(--accent-copper);
+      transform: translateY(-1px);
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: transparent;
+      border: 1px solid var(--border-strong);
+      color: var(--ink);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 7px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .mobile-drawer {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      right: 0;
+      background: var(--bg-glass-strong);
+      backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border-strong);
+      padding: 20px 24px;
+      z-index: 290;
+      display: none;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .mobile-drawer.open {
+      display: flex;
+    }
+
+    .mobile-drawer a {
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 15px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-hairline);
+    }
+
+    /* =================================================================
+       TYPOGRAPHY & LAYOUT CONTAINERS
+       ================================================================= */
+    .content-layer {
+      position: relative;
+      z-index: 10;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 36px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--accent-copper);
+      background: rgba(181, 84, 34, 0.10);
+      border: 1px solid rgba(181, 84, 34, 0.26);
+      padding: 6px 14px;
+      border-radius: 980px;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow.jade {
+      color: var(--accent-jade);
+      background: rgba(29, 104, 68, 0.10);
+      border-color: rgba(29, 104, 68, 0.26);
+    }
+
+    .eyebrow.cobalt {
+      color: var(--accent-cobalt);
+      background: rgba(28, 78, 128, 0.10);
+      border-color: rgba(28, 78, 128, 0.26);
+    }
+
+    .display-h1 {
+      font-family: var(--font-display);
+      font-size: clamp(34px, 4.6vw, 64px);
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      line-height: 1.05;
+      color: var(--ink);
+      margin-bottom: 20px;
+    }
+
+    .display-h2 {
+      font-family: var(--font-display);
+      font-size: clamp(26px, 3.4vw, 44px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+
+    .lead-text {
+      font-size: clamp(15.5px, 1.25vw, 18px);
+      line-height: 1.62;
+      color: var(--ink-secondary);
+      max-width: 60ch;
+    }
+
+    /* =================================================================
+       1. HERO SECTION (COMPLETED 3D FLAGSHIP CAMPUS SHOWCASE)
+       ================================================================= */
+    .hero-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 110px 0 72px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 6fr 6fr;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .hero-card {
+      background: var(--bg-glass);
+      backdrop-filter: saturate(180%) blur(24px);
+      -webkit-backdrop-filter: saturate(180%) blur(24px);
+      border: 1px solid var(--border-strong);
+      border-radius: 32px;
+      padding: 44px;
+      box-shadow: 0 24px 60px rgba(22, 21, 20, 0.08);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 28px 0 36px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--ink);
+      color: var(--bg-alabaster);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 15px 26px;
+      border-radius: 980px;
+      text-decoration: none;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-copper);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(22, 21, 20, 0.05);
+      border: 1px solid var(--border-strong);
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 15px 24px;
+      border-radius: 980px;
+      text-decoration: none;
+      transition: background 0.2s ease;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(22, 21, 20, 0.10);
+    }
+
+    .hero-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      border-top: 1px solid var(--border-hairline);
+      padding-top: 24px;
+    }
+
+    .kpi-cell {
+      background: rgba(255, 255, 255, 0.55);
+      border: 1px solid var(--border-hairline);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .kpi-num {
+      font-family: var(--font-display);
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+    }
+
+    .kpi-caption {
+      font-size: 11px;
+      color: var(--ink-secondary);
+      margin-top: 4px;
+      line-height: 1.35;
+    }
+
+    /* =================================================================
+       2. DIRECT ADDRESS OF CEO SHAULOV NIKOLAY ALEXANDROVICH + CHARTER
+       ================================================================= */
+    .ceo-charter-section {
+      padding: 96px 0;
+    }
+
+    .editorial-sheet {
+      background: var(--bg-glass-strong);
+      backdrop-filter: saturate(180%) blur(28px);
+      -webkit-backdrop-filter: saturate(180%) blur(28px);
+      border: 1px solid var(--border-strong);
+      border-radius: 36px;
+      padding: 56px;
+      box-shadow: 0 32px 72px rgba(22, 21, 20, 0.09);
+    }
+
+    /* CEO Direct Address Block */
+    .ceo-address-grid {
+      display: grid;
+      grid-template-columns: 4fr 8fr;
+      gap: 48px;
+      padding-bottom: 52px;
+      margin-bottom: 52px;
+      border-bottom: 1px solid var(--border-strong);
+      align-items: start;
+    }
+
+    .ceo-portrait-card {
+      background: var(--bg-stone);
+      border: 1px solid var(--border-strong);
+      border-radius: 26px;
+      padding: 28px;
+      position: relative;
+    }
+
+    .ceo-avatar-graphic {
+      width: 100%;
+      height: 220px;
+      border-radius: 18px;
+      background: linear-gradient(145deg, #23211F 0%, #141312 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 22px;
+      color: var(--bg-alabaster);
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .ceo-avatar-graphic::after {
+      content: "ШНА";
+      position: absolute;
+      right: -10px;
+      bottom: -24px;
+      font-family: var(--font-serif);
+      font-size: 120px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.05);
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .ceo-name {
+      font-family: var(--font-display);
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .ceo-role {
+      font-size: 13px;
+      color: var(--ink-secondary);
+      line-height: 1.45;
+      margin-bottom: 16px;
+    }
+
+    .ceo-credentials {
+      border-top: 1px solid var(--border-hairline);
+      padding-top: 14px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--ink-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .ceo-letter-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .ceo-quote-Pull {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: clamp(24px, 2.5vw, 34px);
+      line-height: 1.28;
+      color: var(--ink);
+      margin-bottom: 24px;
+      padding-left: 22px;
+      border-left: 3px solid var(--accent-copper);
+    }
+
+    .ceo-paragraphs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      font-size: 15px;
+      line-height: 1.68;
+      color: var(--ink-secondary);
+      margin-bottom: 32px;
+    }
+
+    .ceo-signature-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 22px 28px;
+      background: rgba(236, 231, 223, 0.65);
+      border: 1px solid var(--border-strong);
+      border-radius: 22px;
+    }
+
+    .sig-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sig-meta strong {
+      font-size: 15px;
+      color: var(--ink);
+    }
+
+    .sig-meta span {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--ink-muted);
+    }
+
+    .signature-svg-wrap {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .ceo-signature-svg {
+      width: 240px;
+      height: 76px;
+      overflow: visible;
+    }
+
+    .sig-path {
+      fill: none;
+      stroke: #183661; /* Authentic fountain-pen sapphire ink */
+      stroke-width: 2.3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 900;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 2.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .official-seal {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 1.5px dashed rgba(28, 78, 128, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 8px;
+      line-height: 1.2;
+      color: var(--accent-cobalt);
+      padding: 6px;
+      transform: rotate(-8deg);
+    }
+
+    /* Mission & Engineering Charter Grid */
+    .mission-split {
+      display: grid;
+      grid-template-columns: 7fr 5fr;
+      gap: 36px;
+      margin-bottom: 44px;
+      padding-bottom: 44px;
+      border-bottom: 1px solid var(--border-hairline);
+    }
+
+    .goal-card {
+      background: var(--bg-dark-card);
+      color: var(--bg-alabaster);
+      border-radius: 26px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .charter-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 28px;
+    }
+
+    .charter-card {
+      background: rgba(255, 255, 255, 0.65);
+      border: 1px solid var(--border-hairline);
+      border-radius: 22px;
+      padding: 26px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .charter-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--border-strong);
+    }
+
+    .charter-idx {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-copper);
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .charter-title {
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--ink);
+    }
+
+    .charter-desc {
+      font-size: 13.5px;
+      line-height: 1.58;
+      color: var(--ink-secondary);
+    }
+
+    /* =================================================================
+       3. 8-STAGE VERIFIED 3D CONSTRUCTION TIME-LAPSE
+       ================================================================= */
+    .timelapse-header-box {
+      max-width: 820px;
+      margin: 0 auto 36px;
+      padding: 36px;
+      background: var(--bg-glass-strong);
+      border: 1px solid var(--border-strong);
+      border-radius: 28px;
+      text-align: center;
+    }
+
+    .story-step {
+      min-height: 125vh;
+      display: flex;
+      align-items: center;
+      padding: 0 6vw;
+      pointer-events: none;
+    }
+
+    .story-card {
+      pointer-events: auto;
+      width: 100%;
+      max-width: 480px;
+      background: var(--bg-glass-strong);
+      backdrop-filter: saturate(180%) blur(24px);
+      -webkit-backdrop-filter: saturate(180%) blur(24px);
+      border: 1px solid var(--border-strong);
+      border-radius: 30px;
+      padding: 36px;
+      box-shadow: 0 28px 60px rgba(22, 21, 20, 0.12);
+    }
+
+    .story-p {
+      font-size: 14.5px;
+      line-height: 1.62;
+      color: var(--ink-secondary);
+      margin-bottom: 20px;
+    }
+
+    .telemetry-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      border-top: 1px solid var(--border-hairline);
+      padding-top: 18px;
+    }
+
+    .tel-box {
+      background: var(--bg-stone);
+      border: 1px solid var(--border-hairline);
+      border-radius: 16px;
+      padding: 12px 14px;
+    }
+
+    .tel-val {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .tel-lbl {
+      font-size: 11px;
+      color: var(--ink-secondary);
+      margin-top: 3px;
+    }
+
+    .qc-pill-bar {
+      margin-top: 14px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: rgba(29, 104, 68, 0.10);
+      border: 1px solid rgba(29, 104, 68, 0.28);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-jade);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* =================================================================
+       FLOATING BOTTOM TIME-LAPSE DOCK & RIGHT TELEMETRY HUD
+       ================================================================= */
+    .timelapse-dock {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translate(-50%, 150%);
+      opacity: 0;
+      z-index: 250;
+      width: min(1220px, calc(100vw - 32px));
+      background: var(--bg-glass-strong);
+      backdrop-filter: saturate(180%) blur(24px);
+      -webkit-backdrop-filter: saturate(180%) blur(24px);
+      border: 1px solid var(--border-strong);
+      border-radius: 22px;
+      padding: 12px 18px 14px;
+      box-shadow: 0 24px 56px rgba(22, 21, 20, 0.18);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .timelapse-dock.visible {
+      transform: translate(-50%, 0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .dock-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+
+    .dock-day-counter {
+      color: var(--accent-terracotta);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .rec-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-terracotta);
+    }
+
+    .dock-stages {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .dock-stage-btn {
+      background: var(--bg-stone);
+      border: 1px solid var(--border-hairline);
+      border-radius: 10px;
+      padding: 7px 9px;
+      color: var(--ink-secondary);
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .dock-stage-btn.active {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: var(--bg-alabaster);
+    }
+
+    .dock-stage-btn span {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--accent-copper);
+      margin-bottom: 2px;
+    }
+
+    .dock-stage-btn.active span {
+      color: #F59E6C;
+    }
+
+    .dock-progress-track {
+      width: 100%;
+      height: 5px;
+      background: rgba(22, 21, 20, 0.10);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .dock-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-copper), var(--accent-jade));
+    }
+
+    .hud-3d-callout {
+      position: fixed;
+      right: 36px;
+      top: 82px;
+      z-index: 200;
+      width: 300px;
+      background: var(--bg-glass-strong);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-strong);
+      border-radius: 20px;
+      padding: 16px 18px;
+      pointer-events: none;
+      box-shadow: 0 16px 40px rgba(22, 21, 20, 0.08);
+    }
+
+    .hud-3d-callout .c-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--accent-copper);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .hud-3d-callout .c-title {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--ink);
+    }
+
+    .hud-3d-callout .c-row {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--ink-secondary);
+      padding: 4px 0;
+      border-bottom: 1px solid var(--border-hairline);
+    }
+
+    .hud-3d-callout .c-row strong {
+      color: var(--ink);
+    }
+
+    /* =================================================================
+       4. COMPLETED PROJECTS PORTFOLIO & 5. PARTNERS
+       ================================================================= */
+    .projects-section {
+      padding: 100px 0;
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-top: 40px;
+    }
+
+    .project-card {
+      background: var(--bg-glass-strong);
+      border: 1px solid var(--border-strong);
+      border-radius: 28px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 20px 48px rgba(22, 21, 20, 0.06);
+    }
+
+    .project-visual {
+      position: relative;
+      height: 210px;
+      background: #DFD9CE;
+      border-bottom: 1px solid var(--border-hairline);
+    }
+
+    .project-visual canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .project-tier-badge {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: var(--bg-alabaster);
+      border: 1px solid var(--border-strong);
+      color: var(--accent-jade);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 980px;
+    }
+
+    .project-year-badge {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: var(--ink);
+      color: var(--bg-alabaster);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 5px 10px;
+      border-radius: 980px;
+    }
+
+    .project-body {
+      padding: 28px;
+    }
+
+    .project-title {
+      font-family: var(--font-display);
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+      color: var(--ink);
+    }
+
+    .project-desc {
+      font-size: 14px;
+      color: var(--ink-secondary);
+      line-height: 1.58;
+      margin-bottom: 20px;
+    }
+
+    .project-specs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-hairline);
+    }
+
+    .p-spec-val {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .p-spec-lbl {
+      font-size: 11px;
+      color: var(--ink-muted);
+      margin-top: 2px;
+    }
+
+    .partners-section {
+      padding: 60px 0 100px;
+    }
+
+    .partners-matrix {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 36px;
+    }
+
+    .partner-box {
+      background: var(--bg-glass-strong);
+      border: 1px solid var(--border-strong);
+      border-radius: 22px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 150px;
+    }
+
+    .partner-role {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--accent-copper);
+      text-transform: uppercase;
+    }
+
+    .partner-name {
+      font-family: var(--font-display);
+      font-size: 19px;
+      font-weight: 800;
+      margin: 8px 0 6px;
+      color: var(--ink);
+    }
+
+    .partner-note {
+      font-size: 12.5px;
+      color: var(--ink-secondary);
+      line-height: 1.48;
+    }
+
+    /* =================================================================
+       6. CONFIGURATOR SECTION
+       ================================================================= */
+    .final-config-section {
+      padding: 60px 0 130px;
+    }
+
+    .config-modal {
+      background: var(--bg-glass-strong);
+      border: 1px solid var(--border-strong);
+      border-radius: 36px;
+      padding: 48px;
+      display: grid;
+      grid-template-columns: 7fr 5fr;
+      gap: 44px;
+      box-shadow: 0 32px 72px rgba(22, 21, 20, 0.10);
+    }
+
+    .choice-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 12px 0 24px;
+    }
+
+    .choice-btn {
+      background: var(--bg-stone);
+      border: 1.5px solid var(--border-hairline);
+      border-radius: 16px;
+      padding: 15px 10px;
+      color: var(--ink);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+
+    .choice-btn.active {
+      border-color: var(--accent-copper);
+      background: rgba(181, 84, 34, 0.10);
+    }
+
+    .choice-btn strong {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 17px;
+      margin-bottom: 3px;
+    }
+
+    .choice-btn span {
+      font-size: 11px;
+      color: var(--ink-secondary);
+    }
+
+    .submit-btn {
+      width: 100%;
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 980px;
+      background: var(--ink);
+      color: var(--bg-alabaster);
+      font-weight: 600;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .submit-btn:hover {
+      background: var(--accent-copper);
+    }
+
+    footer.corp-footer {
+      position: relative;
+      z-index: 20;
+      border-top: 1px solid var(--border-strong);
+      background: var(--bg-alabaster);
+      padding: 44px 36px;
+      font-size: 12px;
+      color: var(--ink-secondary);
+    }
+
+    .footer-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    /* =================================================================
+       MOBILE & TABLET SPLIT-STAGE ARCHITECTURE (< 1024px)
+       ================================================================= */
+    @media (max-width: 1024px) {
+      .site-header {
+        padding: 0 18px;
+      }
+      .nav-links {
+        display: none;
+      }
+      .mobile-menu-btn {
+        display: inline-block;
+      }
+      .container {
+        padding: 0 16px;
+      }
+      .daylight-vignette {
+        background: linear-gradient(
+          180deg,
+          rgba(236,231,223,0.0) 0%,
+          rgba(236,231,223,0.08) 36%,
+          rgba(236,231,223,0.92) 48%,
+          rgba(236,231,223,0.97) 100%
+        );
+      }
+      .hud-3d-callout {
+        display: none;
+      }
+      /* Push Hero & Story cards below top 42vh so 3D Campus is always visible */
+      .hero-screen {
+        padding-top: 44vh;
+        padding-bottom: 48px;
+        align-items: flex-start;
+      }
+      .hero-grid,
+      .ceo-address-grid,
+      .ceo-paragraphs,
+      .mission-split,
+      .charter-grid,
+      .projects-grid,
+      .partners-matrix,
+      .config-modal {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+      .hero-card,
+      .editorial-sheet,
+      .config-modal {
+        padding: 26px 20px;
+        border-radius: 24px;
+      }
+      .hero-kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .story-step {
+        min-height: 115vh;
+        padding: 42vh 16px 24px;
+        align-items: flex-start;
+      }
+      .story-card {
+        max-width: 100%;
+        padding: 24px 20px;
+        border-radius: 24px;
+      }
+      .dock-stages {
+        display: none;
+      }
+      .timelapse-dock {
+        bottom: 10px;
+        width: calc(100vw - 24px);
+        padding: 10px 14px;
+      }
+      .choice-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .project-specs {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =================================================================
+       FIXED FULLSCREEN 3D WEBGL SCENE (THREE.JS PBR)
+       ================================================================= -->
+  <div id="webgl-viewport"></div>
+  <div class="daylight-vignette"></div>
+
+  <!-- =================================================================
+       TOP ARCHITECTURAL HEADER
+       ================================================================= -->
+  <header class="site-header">
+    <a href="#hero" class="brand">
+      <span class="brand-mark"></span>
+      <span>MONOLITH PRO • ЦОД ПОД КЛЮЧ</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#hero">Флагманский кампус</a></li>
+      <li><a href="#ceo-address">Обращение гендиректора</a></li>
+      <li><a href="#charter">Устав качества</a></li>
+      <li><a href="#timelapse-start">3D-таймлапс (8 этапов)</a></li>
+      <li><a href="#projects">Выполненные объекты</a></li>
+      <li><a href="#partners">Партнеры</a></li>
+    </ul>
+    <div class="header-actions">
+      <a href="#configurator" class="header-cta">Рассчитать ЦОД</a>
+      <button class="mobile-menu-btn" onclick="toggleMobileDrawer()">МЕНЮ ☰</button>
+    </div>
+  </header>
+
+  <nav class="mobile-drawer" id="mobileDrawer">
+    <a href="#hero" onclick="toggleMobileDrawer()">01. Флагманский 3D-кампус</a>
+    <a href="#ceo-address" onclick="toggleMobileDrawer()">02. Обращение Генерального директора</a>
+    <a href="#charter" onclick="toggleMobileDrawer()">03. Инженерный Устав компании</a>
+    <a href="#timelapse-start" onclick="toggleMobileDrawer()">04. 3D-таймлапс строительства (8 этапов)</a>
+    <a href="#projects" onclick="toggleMobileDrawer()">05. Выполненные проекты ЦОД</a>
+    <a href="#partners" onclick="toggleMobileDrawer()">06. Технологические партнеры</a>
+    <a href="#configurator" onclick="toggleMobileDrawer()">07. Калькулятор спецификации СМР</a>
+  </nav>
+
+  <!-- =================================================================
+       RIGHT FLOATING 3D TELEMETRY INSPECTOR (DESKTOP)
+       ================================================================= -->
+  <aside class="hud-3d-callout" id="hudCallout">
+    <div class="c-tag" id="hudTag">КАМЕРА 00 • ФЛАГМАНСКИЙ КАМПУС TIER IV</div>
+    <div class="c-title" id="hudNodeTitle">Готовый дата-центр 16,0 МВт (100% сборка)</div>
+    <div class="c-row">
+      <span>Статус 3D-двойника:</span>
+      <strong id="hudElev">Промышленная эксплуатация</strong>
+    </div>
+    <div class="c-row">
+      <span>Инструмент контроля:</span>
+      <strong id="hudTool">АСУДД / BMS + BIM LOD 500</strong>
+    </div>
+    <div class="c-row">
+      <span>Схема резервирования:</span>
+      <strong id="hudTol" style="color:var(--accent-jade);">2N Fault Tolerant (99,995%)</strong>
+    </div>
+  </aside>
+
+  <!-- =================================================================
+       FLOATING BOTTOM TIME-LAPSE DOCK
+       ================================================================= -->
+  <div class="timelapse-dock" id="timelapseDock">
+    <div class="dock-top-row">
+      <div class="dock-day-counter">
+        <span class="rec-dot"></span>
+        <span id="dockDayText">ДЕНЬ 001 / 365 • 8-ЭТАПНЫЙ 3D-ТАЙМЛАПС СТРОИТЕЛЬСТВА</span>
+      </div>
+      <div id="dockPercentText" style="color:var(--ink-secondary); font-weight:600;">ГОТОВНОСТЬ СМР: 0%</div>
+    </div>
+
+    <div class="dock-stages" id="dockStageButtons">
+      <button class="dock-stage-btn active" onclick="scrollToPhase(0)">
+        <span>ДЕНЬ 001–040</span>1. Сваи и контур
+      </button>
+      <button class="dock-stage-btn" onclick="scrollToPhase(1)">
+        <span>ДЕНЬ 041–095</span>2. Ростверк КЖ0
+      </button>
+      <button class="dock-stage-btn" onclick="scrollToPhase(2)">
+        <span>ДЕНЬ 096–155</span>3. Каркас КМ
+      </button>
+      <button class="dock-stage-btn" onclick="scrollToPhase(3)">
+        <span>ДЕНЬ 156–205</span>4. ГПП и ДЭС 2N
+      </button>
+      <button class="dock-stage-btn" onclick="scrollToPhase(4)">
+        <span>ДЕНЬ 206–255</span>5. ИБП и шины
+      </button>
+      <button class="dock-stage-btn" onclick="scrollToPhase(5)">
+        <span>ДЕНЬ 256–300</span>6. Холод DN300
+      </button>
+      <button class="dock-stage-btn" onclick="scrollToPhase(6)">
+        <span>ДЕНЬ 301–340</span>7. Машзал и ГОТВ
+      </button>
+      <button class="dock-stage-btn" onclick="scrollToPhase(7)">
+        <span>ДЕНЬ 341–365</span>8. ПНР L1–L5
+      </button>
+    </div>
+
+    <div class="dock-progress-track">
+      <div class="dock-progress-bar" id="dockProgressBar"></div>
+    </div>
+  </div>
+
+  <!-- =================================================================
+       MAIN CONTENT LAYER
+       ================================================================= -->
+  <div class="content-layer">
+
+    <!-- ===============================================================
+         1. HERO SCREEN: COMPLETED ARCHITECTURAL FLAGSHIP CAMPUS
+         =============================================================== -->
+    <section id="hero" class="hero-screen">
+      <div class="container">
+        <div class="hero-grid">
+          <div class="hero-card">
+            <div class="eyebrow">ГЕНЕРАЛЬНЫЙ EPC-ПОДРЯДЧИК • ОСОБО ОПАСНЫЕ И ТЕХНИЧЕСКИ СЛОЖНЫЕ ОБЪЕКТЫ</div>
+            <h1 class="display-h1">
+              Дата-центры уровня Tier&nbsp;IV.<br/>Построены в&nbsp;бетоне, меди и&nbsp;стали.
+            </h1>
+            <p class="lead-text">
+              Полный цикл проектирования, капитального строительства и&nbsp;сертификации гиперскейл ЦОД и&nbsp;вычислительных кластеров ИИ. В&nbsp;3D-сцене перед вами&nbsp;— наш типовой кампус полезной ИТ-мощностью 16,0&nbsp;МВт с&nbsp;собственной ГПП 110/10&nbsp;кВ и&nbsp;резервированием&nbsp;2N.
+            </p>
+
+            <div class="hero-actions">
+              <a href="#timelapse-start" class="btn-primary">
+                <span>Смотреть 3D-таймлапс возведения (365&nbsp;дней)</span>
+                <span>↓</span>
+              </a>
+              <a href="#ceo-address" class="btn-secondary">Обращение Генерального директора</a>
+            </div>
+
+            <div class="hero-kpi-grid">
+              <div class="kpi-cell">
+                <div class="kpi-num">240&nbsp;МВт</div>
+                <div class="kpi-caption">Введенной электрической мощности ЦОД</div>
+              </div>
+              <div class="kpi-cell">
+                <div class="kpi-num">14&nbsp;ЦОД</div>
+                <div class="kpi-caption">Построены и&nbsp;аттестованы Tier&nbsp;III&nbsp;/ Tier&nbsp;IV</div>
+              </div>
+              <div class="kpi-cell">
+                <div class="kpi-num">12&nbsp;мес.</div>
+                <div class="kpi-caption">Директивный цикл за&nbsp;счет заводских модулей DfMA</div>
+              </div>
+              <div class="kpi-cell">
+                <div class="kpi-num">99,995%</div>
+                <div class="kpi-caption">Финансовая гарантия непрерывности в&nbsp;EPC-договоре</div>
+              </div>
+            </div>
+          </div>
+          <div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===============================================================
+         2. DIRECT ADDRESS OF GENERAL DIRECTOR SHAULOV N. A. & CHARTER
+         =============================================================== -->
+    <section id="ceo-address" class="ceo-charter-section">
+      <div class="container">
+        <div class="editorial-sheet">
+
+          <!-- ПРЯМОЕ ОБРАЩЕНИЕ ГЕНЕРАЛЬНОГО ДИРЕКТОРА ШАУЛОВА НИКОЛАЯ АЛЕКСАНДРОВИЧА -->
+          <div class="ceo-address-grid">
+            <div class="ceo-portrait-card">
+              <div class="ceo-avatar-graphic">
+                <div style="font-family:var(--font-mono); font-size:10px; color:#D49A78; letter-spacing:0.06em;">
+                  ПЕРВОЕ ЛИЦО КОМПАНИИ • ПЕРСОНАЛЬНЫЙ НАДЗОР
+                </div>
+                <div>
+                  <div style="font-family:var(--font-serif); font-size:26px; font-style:italic; line-height:1.15; margin-bottom:6px;">
+                    «В строительстве ЦОД нет второстепенных швов»
+                  </div>
+                  <div style="font-family:var(--font-mono); font-size:10px; color:rgba(255,255,255,0.6);">
+                    АО «МОНОЛИТ ПРО ИНЖИНИРИНГ»
+                  </div>
+                </div>
+              </div>
+
+              <div class="ceo-name">Шаулов Николай Александрович</div>
+              <div class="ceo-role">
+                Генеральный директор АО&nbsp;«МОНОЛИТ ПРО ИНЖИНИРИНГ», главный куратор программ комплексной пусконаладки уровня&nbsp;L5 (IST)
+              </div>
+
+              <div class="ceo-credentials">
+                <span>• Реестр НОСТРОЙ / НОПРИЗ (I уровень ответственности)</span>
+                <span>• Аттестация промышленной безопасности Ростехнадзора (А.1, Б.7, Г.2)</span>
+                <span>• Личный стаж в капитальном промышленном строительстве: 22 года</span>
+              </div>
+            </div>
+
+            <div class="ceo-letter-body">
+              <div>
+                <div class="eyebrow">ПРЯМОЕ ОБРАЩЕНИЕ ГЕНЕРАЛЬНОГО ДИРЕКТОРА</div>
+                <blockquote class="ceo-quote-Pull">
+                  «Дата-центр&nbsp;— это не склад с&nbsp;серверами и&nbsp;не красивая презентация. Это особо опасный энергетический объект, где ошибка в&nbsp;протяжке одной медной шины или непровар стыка трубы стоят миллионы рублей в&nbsp;минуту. Поэтому под каждым актом испытаний L5 стоит моя личная подпись».
+                </blockquote>
+
+                <div class="ceo-paragraphs">
+                  <p>
+                    За двадцать два года в&nbsp;индустриальном строительстве я&nbsp;видел главную болезнь рынка: когда проектировщик рисует одно, общестроительный подрядчик заливает бетон «как привык», а&nbsp;интегратор пытается втиснуть инженерные трассы в&nbsp;уже готовые стены. Мы в&nbsp;<strong>MONOLITH PRO</strong> ликвидировали этот разрыв, объединив проектное бюро 5D&nbsp;BIM, собственный парк буровой техники, завод блочно-модульных энергетических скидов (DfMA) и&nbsp;лабораторию неразрушающего контроля в&nbsp;единый генподрядный контур.
+                  </p>
+                  <p>
+                    Мы работаем по&nbsp;прозрачной модели <strong>Lump Sum Turnkey</strong>: фиксируем твердую стоимость и&nbsp;срок до&nbsp;выхода техники на&nbsp;котлован. Я&nbsp;лично присутствую на&nbsp;каждом 72-часовом испытании полного обесточивания («Pull-the-Plug»), когда при 100% тепловой нагрузке в&nbsp;машзалах мы физически отключаем внешние вводы 110&nbsp;кВ. Заказчик принимает у&nbsp;нас объект только тогда, когда осциллограф показывает&nbsp;<strong>0,0&nbsp;мс</strong> прерывания на&nbsp;серверных шинах.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Блок с личной каллиграфической подписью Шаулова Н. А. и печатью -->
+              <div class="ceo-signature-bar">
+                <div class="sig-meta">
+                  <strong>С уважением и личной гарантией результата,</strong>
+                  <strong>Шаулов Николай Александрович</strong>
+                  <span>ГЕНЕРАЛЬНЫЙ ДИРЕКТОР АО «МОНОЛИТ ПРО ИНЖИНИРИНГ»</span>
+                </div>
+
+                <div class="signature-svg-wrap">
+                  <!-- Векторный каллиграфический автограф Шаулова Н. А. -->
+                  <svg class="ceo-signature-svg" viewBox="0 0 280 86" aria-label="Личная подпись Генерального директора Шаулова Николая Александровича">
+                    <!-- Основной росчерк «Шаулов Н. А.» -->
+                    <path class="sig-path" d="M 16 58 C 22 22, 30 14, 32 54 C 34 64, 42 20, 48 52 C 52 62, 62 18, 66 54 C 72 48, 80 34, 88 38 C 94 42, 82 56, 92 54 C 102 52, 108 32, 114 48 C 118 62, 110 76, 98 70 C 90 66, 116 42, 128 38 C 138 34, 134 52, 144 48 C 154 44, 166 20, 162 48 C 160 56, 174 42, 184 26 C 188 18, 182 58, 194 48 C 204 38, 212 24, 218 52 C 222 42, 236 32, 248 36" />
+                    <!-- Фирменная нижняя засечка и параф -->
+                    <path class="sig-path" d="M 28 68 C 86 60, 178 56, 264 46 C 242 54, 210 64, 192 72" stroke-width="1.8" />
+                    <circle cx="256" cy="36" r="2.2" fill="#183661" />
+                  </svg>
+
+                  <div class="official-seal">
+                    АО «МОНОЛИТ ПРО»<br/>ГЕНЕРАЛЬНЫЙ<br/>ДИРЕКТОР<br/>ШАУЛОВ Н. А.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- О КОМПАНИИ, ЦЕЛЬ И УСТАВ ИНЖЕНЕРНОГО КАЧЕСТВА -->
+          <div id="charter" class="mission-split">
+            <div>
+              <div class="eyebrow cobalt">О КОМПАНИИ И НАШЕМ ПОДХОДЕ</div>
+              <h2 class="display-h2" style="font-size: clamp(24px, 2.8vw, 36px);">
+                Собственные инженерные мощности вместо цепочки субподрядчиков.
+              </h2>
+              <p style="font-size: 15px; line-height: 1.65; color: var(--ink-secondary); margin-bottom: 14px;">
+                В структуру <strong>MONOLITH PRO</strong> входят департамент генерального проектирования (BIM LOD&nbsp;500), управление специальных фундаментов, сборочное производство модульных водоохлаждающих и&nbsp;электротехнических скидов (DfMA) и&nbsp;аттестованная электролаборатория до&nbsp;110&nbsp;кВ.
+              </p>
+              <p style="font-size: 15px; line-height: 1.65; color: var(--ink-secondary);">
+                Строгое соблюдение СП&nbsp;541.1325800 «Здания и&nbsp;сооружения центров обработки данных», ПУЭ (7-е&nbsp;изд.), стандартов Uptime Institute Tier Standard (Topology &amp;&nbsp;Operational Sustainability) и&nbsp;TIA-942-B позволяет нам сдавать объекты государственной и&nbsp;корпоративной значимости с&nbsp;первого предъявления.
+              </p>
+            </div>
+
+            <div class="goal-card">
+              <div>
+                <div class="eyebrow" style="color:#F59E6C; border-color:rgba(245,158,108,0.35); background:rgba(245,158,108,0.12);">НАША СТРАТЕГИЧЕСКАЯ ЦЕЛЬ</div>
+                <h3 style="font-family:var(--font-display); font-size:22px; font-weight:700; line-height:1.3; margin-bottom:12px;">
+                  Возводить капитальные дата-центры Tier&nbsp;IV за&nbsp;12&nbsp;месяцев за&nbsp;счет параллельной заводской сборки инженерных систем.
+                </h3>
+                <p style="font-size:13.5px; line-height:1.6; color:#C2BDB4;">
+                  Пока на&nbsp;стройплощадке разрабатывается котлован и&nbsp;вяжется арматура ростверка (Этапы&nbsp;1–2), на&nbsp;нашем заводе уже собираются и&nbsp;проходят стендовые испытания FAT (Level&nbsp;2) контейнерные РУ-10/0,4&nbsp;кВ, насосные группы и&nbsp;узлы ГРЩ.
+                </p>
+              </div>
+              <div style="margin-top:20px; padding-top:14px; border-top:1px solid rgba(255,255,255,0.14); font-family:var(--font-mono); font-size:11px; color:#F59E6C; display:flex; justify-content:space-between;">
+                <span>СРО: I УРОВЕНЬ (ДО 10 МЛРД ₽)</span>
+                <span>0 КОЛЛИЗИЙ НА СТРОЙКЕ</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="eyebrow jade">УСТАВ ИНЖЕНЕРНОГО КАЧЕСТВА АО «МОНОЛИТ ПРО ИНЖИНИРИНГ»</div>
+            <h3 class="display-h2" style="font-size: clamp(22px, 2.4vw, 32px);">
+              Шесть обязательных рубежей инструментального контроля
+            </h3>
+          </div>
+
+          <div class="charter-grid">
+            <div class="charter-card">
+              <span class="charter-idx">СТАТЬЯ УСТАВА 01 // ФУНДАМЕНТЫ И ГЕОТЕХНИКА</span>
+              <div class="charter-title">100% сейсмоакустика свай и заземление ≤ 0,3 Ом</div>
+              <p class="charter-desc">
+                Каждая буронабивная свая проверяется прибором «Спектр-4» на отсутствие каверн и шеек. Глубинный медный контур заземления сдается при сопротивлении растеканию тока не более 0,3&nbsp;Ом.
+              </p>
+            </div>
+
+            <div class="charter-card">
+              <span class="charter-idx">СТАТЬЯ УСТАВА 02 // ЛАЗЕРНЫЙ НАДЗОР 5D BIM</span>
+              <div class="charter-title">Ежесуточное сканирование Leica RTC360</div>
+              <p class="charter-desc">
+                Каждые 24 часа облако точек со стройплощадки совмещается с исполнительной моделью LOD&nbsp;500. Допуск установки закладных деталей и анкеров — не более ±1,2&nbsp;мм.
+              </p>
+            </div>
+
+            <div class="charter-card">
+              <span class="charter-idx">СТАТЬЯ УСТАВА 03 // ДЕФЕКТОСКОПИЯ ТРУБОПРОВОДОВ</span>
+              <div class="charter-title">Сплошной УЗК сварных стыков по ГОСТ Р 55724</div>
+              <p class="charter-desc">
+                Кольцевые коллекторы холодоснабжения DN300 проходят 100% ультразвуковой контроль дефектоскопом УД2В-П46 и суточную гидравлическую опрессовку давлением 16,0&nbsp;бар.
+              </p>
+            </div>
+
+            <div class="charter-card">
+              <span class="charter-idx">СТАТЬЯ УСТАВА 04 // ЭЛЕКТРОТЕХНИЧЕСКАЯ РЕВИЗИЯ</span>
+              <div class="charter-title">Микроомметрия шинопроводов 5000 А</div>
+              <p class="charter-desc">
+                Каждое болтовое соединение магистральных медных шин Лучей «А» и «Б» протягивается динамометрическим ключом с паспортом переходного сопротивления ≤ 7,5&nbsp;мкОм (МИКО-21).
+              </p>
+            </div>
+
+            <div class="charter-card">
+              <span class="charter-idx">СТАТЬЯ УСТАВА 05 // ЧИСТАЯ ЗОНА МАШЗАЛА</span>
+              <div class="charter-title">Аэродверной тест и чистота воздуха ISO Class 8</div>
+              <p class="charter-desc">
+                До ввоза стоек в машзалах создается избыточное давление +18,5&nbsp;Па, проводится проверка кратности воздухообмена и лазерный подсчет взвешенных микрочастиц.
+              </p>
+            </div>
+
+            <div class="charter-card">
+              <span class="charter-idx">СТАТЬЯ УСТАВА 06 // КОМИССИОНИНГ L1–L5</span>
+              <div class="charter-title">Испытание полным блэкаутом 72 часа (IST L5)</div>
+              <p class="charter-desc">
+                Под 100% нагрузкой тепловыми пушками (Load Banks) отключаются оба ввода 110&nbsp;кВ. Проверяется перехват ИБП (0,0&nbsp;мс), синхронизация 16&nbsp;ДГУ за 8,4&nbsp;с и термография щитов Fluke Ti480.
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===============================================================
+         3. 8-STAGE VERIFIED 3D CONSTRUCTION TIME-LAPSE
+         =============================================================== -->
+    <div id="timelapse-start" class="container">
+      <div class="timelapse-header-box">
+        <div class="eyebrow">ИНТЕРАКТИВНЫЙ 3D-ТАЙМЛАПС ВОЗВЕДЕНИЯ ЦОД (ДЕНЬ 001 — ДЕНЬ 365)</div>
+        <h2 class="display-h2">Прокрутите страницу, чтобы построить ЦОД с&nbsp;нуля.</h2>
+        <p style="color: var(--ink-secondary); font-size: 15.5px; line-height: 1.6; max-width: 66ch; margin: 0 auto;">
+          При вращении колеса мыши (или свайпе на телефоне) 3D-модель переходит к&nbsp;отметке <strong>День&nbsp;001</strong> и&nbsp;последовательно монтирует все 8&nbsp;технологических этапов создания дата-центра.
+        </p>
+      </div>
+    </div>
+
+    <main class="scroll-container" id="scrollTrack">
+
+      <!-- ЭТАП 1: ИЗЫСКАНИЯ, КОТЛОВАН, 36 СВАЙ И ГЛУБИННЫЙ КОНТУР ЗАЗЕМЛЕНИЯ -->
+      <section class="story-step" data-phase="0">
+        <div class="story-card">
+          <div class="eyebrow">ЭТАП 01 из 08 • ДЕНЬ 001 – 040 (КЖ0 / ГЕОТЕХНИКА)</div>
+          <h2 class="display-h2" style="font-size: 26px;">Котлован, 36 буронабивных свай Ø600&nbsp;мм и&nbsp;медный контур заземления.</h2>
+          <p class="story-p">
+            По данным инженерно-геологических изысканий разрабатывается котлован, методом ВПТ бетонируются 36&nbsp;свай из гидробетона B35&nbsp;W8 с&nbsp;опорой на коренные грунты и&nbsp;укладывается горизонтальная медная полоса заземления.
+          </p>
+          <div class="telemetry-grid">
+            <div class="tel-box">
+              <div class="tel-val">36 свай B35</div>
+              <div class="tel-lbl">Несущая способность 240&nbsp;т/свая</div>
+            </div>
+            <div class="tel-box">
+              <div class="tel-val">0,28&nbsp;Ом</div>
+              <div class="tel-lbl">Сопротивление контура (ПУЭ ≤&nbsp;0,5&nbsp;Ом)</div>
+            </div>
+          </div>
+          <div class="qc-pill-bar">
+            <span>СЕЙСМОАКУСТИКА «СПЕКТР-4» + MRU-200</span>
+            <strong>АКТ КЖ0 ПРИНЯТ ✓</strong>
+          </div>
+        </div>
+      </section>
+
+      <!-- ЭТАП 2: АРМАТУРНАЯ МАТРИЦА Ø28, МОНОЛИТНЫЙ РОСТВЕРК И БРАНДМАУЭРЫ -->
+      <section class="story-step" data-phase="1">
+        <div class="story-card">
+          <div class="eyebrow">ЭТАП 02 из 08 • ДЕНЬ 041 – 095 (КЖ / МОНОЛИТ)</div>
+          <h2 class="display-h2" style="font-size: 26px;">Арматурный каркас Ø28&nbsp;А500С, плита 900&nbsp;мм и&nbsp;ядро жесткости EI&nbsp;120.</h2>
+          <p class="story-p">
+            Вяжется двухъярусная пространственная решетка армирования, заливается бесшовная фундаментная плита под распределенную нагрузку 2&nbsp;500&nbsp;кг/м² и&nbsp;возводится капитальная противопожарная стена, разделяющая машзал и&nbsp;энергоцентр.
+          </p>
+          <div class="telemetry-grid">
+            <div class="tel-box">
+              <div class="tel-val">2&nbsp;500&nbsp;кг/м²</div>
+              <div class="tel-lbl">Запас под стойки ИИ и&nbsp;ИБП</div>
+            </div>
+            <div class="tel-box">
+              <div class="tel-val">45,0&nbsp;мм</div>
+              <div class="tel-lbl">Защитный слой бетона (±0,8&nbsp;мм)</div>
+            </div>
+          </div>
+          <div class="qc-pill-bar">
+            <span>ГЕОРАДАР HILTI FERROSCAN PS&nbsp;300</span>
+            <strong>БЕЗ КАВЕРН ✓</strong>
+          </div>
+        </div>
+      </section>
+
+      <!-- ЭТАП 3: СИЛОВОЙ МЕТАЛЛОКАРКАС КМ И БОЛЬШЕПРОЛЕТНЫЕ ФЕРМЫ -->
+      <section class="story-step" data-phase="2">
+        <div class="story-card">
+          <div class="eyebrow">ЭТАП 03 из 08 • ДЕНЬ 096 – 155 (КМ / КАРКАС)</div>
+          <h2 class="display-h2" style="font-size: 26px;">Двутавровые колонны С345 и&nbsp;стропильные фермы пролетом 24&nbsp;м.</h2>
+          <p class="story-p">
+            Монтируется силовой стальной каркас со свободным пролетом без промежуточных колонн в&nbsp;зоне машзалов. Все высокопрочные болты М24 проходят 100% динамометрический контроль, а&nbsp;металл покрывается огнезащитой R120.
+          </p>
+          <div class="telemetry-grid">
+            <div class="tel-box">
+              <div class="tel-val">Сталь С345</div>
+              <div class="tel-lbl">Предел огнестойкости R120</div>
+            </div>
+            <div class="tel-box">
+              <div class="tel-val">820&nbsp;Н·м</div>
+              <div class="tel-lbl">Момент затяжки болтов М24</div>
+            </div>
+          </div>
+          <div class="qc-pill-bar">
+            <span>ТАХЕОМЕТР LEICA TS16 + ELCOMETER</span>
+            <strong>ВЕРТИКАЛЬ ±1,1&nbsp;ММ ✓</strong>
+          </div>
+        </div>
+      </section>
+
+      <!-- ЭТАП 4: ВНЕШНЯЯ ГПП 110/10 КВ И ДИЗЕЛЬ-ГЕНЕРАТОРНАЯ СТАНЦИЯ 2N -->
+      <section class="story-step" data-phase="3">
+        <div class="story-card">
+          <div class="eyebrow">ЭТАП 04 из 08 • ДЕНЬ 156 – 205 (ГПП И ДЭС 2N)</div>
+          <h2 class="display-h2" style="font-size: 26px;">Подстанция ГПП 110/10&nbsp;кВ и&nbsp;площадка контейнерных ДГУ&nbsp;2N.</h2>
+          <p class="story-p">
+            Слева от корпуса строится двухтрансформаторная ГПП 110/10&nbsp;кВ (2&nbsp;×&nbsp;25&nbsp;МВА), а&nbsp;на открытом стапеле монтируются бронированные контейнеры дизель-генераторных установок класса G3 с&nbsp;запасом дизельного топлива на 72&nbsp;часа.
+          </p>
+          <div class="telemetry-grid">
+            <div class="tel-box">
+              <div class="tel-val">2&nbsp;×&nbsp;25&nbsp;МВА</div>
+              <div class="tel-lbl">Независимые вводы ГПП 110&nbsp;кВ</div>
+            </div>
+            <div class="tel-box">
+              <div class="tel-val">8,4&nbsp;сек</div>
+              <div class="tel-lbl">Выход ДГУ на шину с&nbsp;синхронизацией</div>
+            </div>
+          </div>
+          <div class="qc-pill-bar">
+            <span>КОМПЛЕКС РЗА «РЕТОМ-61» + FAT L2</span>
+            <strong>СЕЛЕКТИВНОСТЬ 100% ✓</strong>
+          </div>
+        </div>
+      </section>
+
+      <!-- ЭТАП 5: ВНУТРЕННИЙ ЭНЕРГОЦЕНТР 2N, ИБП LI-ION И ШИНОПРОВОДЫ 5000 А -->
+      <section class="story-step" data-phase="4">
+        <div class="story-card">
+          <div class="eyebrow">ЭТАП 05 из 08 • ДЕНЬ 206 – 255 (ЭОМ / ШИНЫ 2N)</div>
+          <h2 class="display-h2" style="font-size: 26px;">Сухие трансформаторы, ИБП Li-Ion и&nbsp;медные шинопроводы 5000&nbsp;А.</h2>
+          <p class="story-p">
+            В изолированных отсеках энергокрыла размещаются ГРЩ-0,4&nbsp;кВ и&nbsp;статические ИБП двойного преобразования, а&nbsp;под потолком машзала монтируются две независимые трассы медных шинопроводов 5000&nbsp;А (Лучи «А» и&nbsp;«Б»).
+          </p>
+          <div class="telemetry-grid">
+            <div class="tel-box">
+              <div class="tel-val">2&nbsp;×&nbsp;5000&nbsp;А</div>
+              <div class="tel-lbl">Медь электролитическая М1</div>
+            </div>
+            <div class="tel-box">
+              <div class="tel-val">7,1&nbsp;мкОм</div>
+              <div class="tel-lbl">Переходное сопротивление стыков</div>
+            </div>
+          </div>
+          <div class="qc-pill-bar">
+            <span>МИКРООММЕТР МИКО-21 + АИД-70М</span>
+            <strong>ИЗОЛЯЦИЯ 2,5&nbsp;КВ ОК ✓</strong>
+          </div>
+        </div>
+      </section>
+
+      <!-- ЭТАП 6: КОЛЬЦЕВЫЕ КОЛЛЕКТОРЫ DN300 И 8 ЧИЛЛЕРОВ ФРИКУЛИНГА N+2 -->
+      <section class="story-step" data-phase="5">
+        <div class="story-card">
+          <div class="eyebrow">ЭТАП 06 из 08 • ДЕНЬ 256 – 300 (ОВиК / ХОЛОДОЦЕНТР)</div>
+          <h2 class="display-h2" style="font-size: 26px;">Гидроколлекторы DN300 с&nbsp;CDU и&nbsp;8&nbsp;чиллеров фрикулинга N+2 на кровле.</h2>
+          <p class="story-p">
+            В пленуме под фальшполом свариваются закольцованные стальные трубопроводы подачи (+14&nbsp;°C) и&nbsp;обратки (+22&nbsp;°C), а&nbsp;на разгрузочной раме кровли устанавливаются 8&nbsp;высокоэффективных чиллеров с&nbsp;осевыми вентиляторами.
+          </p>
+          <div class="telemetry-grid">
+            <div class="tel-box">
+              <div class="tel-val">16,0&nbsp;бар</div>
+              <div class="tel-lbl">Гидроиспытание в&nbsp;течение 24&nbsp;ч</div>
+            </div>
+            <div class="tel-box">
+              <div class="tel-val">PUE 1,12</div>
+              <div class="tel-lbl">Среднегодовой коэффициент</div>
+            </div>
+          </div>
+          <div class="qc-pill-bar">
+            <span>100% УЗК ШВОВ (ГОСТ Р 55724 / УД2В-П46)</span>
+            <strong>ДЕФЕКТОВ 0,0% ✓</strong>
+          </div>
+        </div>
+      </section>
+
+      <!-- ЭТАП 7: ЧИСТЫЙ МАШЗАЛ ISO 8, 40 СТОЕК, СКС И СТАНЦИЯ АУГПТ NOVEC 1230 -->
+      <section class="story-step" data-phase="6">
+        <div class="story-card">
+          <div class="eyebrow">ЭТАП 07 из 08 • ДЕНЬ 301 – 340 (МАШЗАЛ / СКС / АУГПТ)</div>
+          <h2 class="display-h2" style="font-size: 26px;">Чистый зал ISO&nbsp;8, серверные стойки, лотки оптики СКС и&nbsp;АУГПТ ГОТВ.</h2>
+          <p class="story-p">
+            Монтируется антистатический фальшпол 1200&nbsp;мм, рядами встают серверные шкафы с&nbsp;изоляцией холодных коридоров, желтые кабельные лотки оптической СКС, фасадные кассеты и&nbsp;батарея баллонов газового пожаротушения Novec&nbsp;1230.
+          </p>
+          <div class="telemetry-grid">
+            <div class="tel-box">
+              <div class="tel-val">ISO Class 8</div>
+              <div class="tel-lbl">Лазерный контроль чистоты зала</div>
+            </div>
+            <div class="tel-box">
+              <div class="tel-val">+18,5&nbsp;Па</div>
+              <div class="tel-lbl">Избыточное давление (Аэродверь)</div>
+            </div>
+          </div>
+          <div class="qc-pill-bar">
+            <span>РЕФЛЕКТОМЕТР OTDR + АСПИРАЦИЯ VESDA</span>
+            <strong>ЗАЛ ГЕРМЕТИЧЕН ✓</strong>
+          </div>
+        </div>
+      </section>
+
+      <!-- ЭТАП 8: КОМПЛЕКСНЫЕ ИСПЫТАНИЯ IST LEVEL 5 (PULL-THE-PLUG & THERMAL CUTAWAY) -->
+      <section class="story-step" data-phase="7">
+        <div class="story-card">
+          <div class="eyebrow jade">ЭТАП 08 из 08 • ДЕНЬ 341 – 365 (КОМИССИОНИНГ L1–L5)</div>
+          <h2 class="display-h2" style="font-size: 26px;">Аттестация IST Level&nbsp;5: разрез здания и&nbsp;тепловизор под 100% нагрузкой.</h2>
+          <p class="story-p">
+            Кровля и&nbsp;фасад в&nbsp;3D-сцене плавно поднимаются вверх, открывая внутренний разрез ЦОД во время 72-часового теста тепловыми пушками (Load Banks) с&nbsp;отключением обоих вводов 110&nbsp;кВ и&nbsp;тепловизионным контролем шин 5000&nbsp;А.
+          </p>
+          <div class="telemetry-grid">
+            <div class="tel-box">
+              <div class="tel-val">0,0&nbsp;мс</div>
+              <div class="tel-lbl">Прерывание питания на стойках</div>
+            </div>
+            <div class="tel-box">
+              <div class="tel-val">ΔT ≤ 1,1&nbsp;°C</div>
+              <div class="tel-lbl">Термограмма Fluke Ti480 PRO</div>
+            </div>
+          </div>
+          <div class="qc-pill-bar">
+            <span>СЕРТИФИКАТ UPTIME INSTITUTE TIER IV</span>
+            <strong>ОБЪЕКТ СДАН В СРОК ✓</strong>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ===============================================================
+         4. COMPLETED PROJECTS PORTFOLIO ("ВЫПОЛНЕННЫЕ ПРОЕКТЫ")
+         =============================================================== -->
+    <section id="projects" class="projects-section">
+      <div class="container">
+        <div class="eyebrow">ПОРТФОЛИО ВВЕДЕННЫХ В ЭКСПЛУАТАЦИЮ ОБЪЕКТОВ</div>
+        <h2 class="display-h2">Построенные и&nbsp;аттестованные кампусы ЦОД.</h2>
+        <p class="lead-text">
+          Все представленные объекты возведены нами в&nbsp;статусе генерального EPC-подрядчика, прошли пятиуровневую программу испытаний (L1–L5) и&nbsp;несут круглосуточную боевую нагрузку.
+        </p>
+
+        <div class="projects-grid">
+
+          <article class="project-card">
+            <div class="project-visual">
+              <canvas class="proj-canvas" data-theme="copper"></canvas>
+              <span class="project-tier-badge">UPTIME TIER IV GOLD • В ЭКСПЛУАТАЦИИ</span>
+              <span class="project-year-badge">МОСКВА • 2025</span>
+            </div>
+            <div class="project-body">
+              <h3 class="project-title">Гиперскейл-кампус «СЕВЕР-1» (Финтех и&nbsp;ИИ)</h3>
+              <p class="project-desc">
+                Два капитальных корпуса с&nbsp;собственной ГПП 110/10&nbsp;кВ мощностью 2&nbsp;×&nbsp;40&nbsp;МВА, комбинированным охлаждением (косвенный фрикулинг + контур СЖО CDU до 110&nbsp;кВт/стойка) и&nbsp;резервной ДЭС из 32&nbsp;ДГУ по 2500&nbsp;кВА.
+              </p>
+              <div class="project-specs">
+                <div>
+                  <div class="p-spec-val">32,0&nbsp;МВт</div>
+                  <div class="p-spec-lbl">ИТ-мощность</div>
+                </div>
+                <div>
+                  <div class="p-spec-val">1&nbsp;600</div>
+                  <div class="p-spec-lbl">Стоек 48U</div>
+                </div>
+                <div>
+                  <div class="p-spec-val">1,11</div>
+                  <div class="p-spec-lbl">Факт. PUE</div>
+                </div>
+                <div>
+                  <div class="p-spec-val">14&nbsp;мес.</div>
+                  <div class="p-spec-lbl">Цикл СМР</div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="project-card">
+            <div class="project-visual">
+              <canvas class="proj-canvas" data-theme="cobalt"></canvas>
+              <span class="project-tier-badge">UPTIME TIER III CONSTRUCTED FACILITY</span>
+              <span class="project-year-badge">САНКТ-ПЕТЕРБУРГ • 2025</span>
+            </div>
+            <div class="project-body">
+              <h3 class="project-title">Облачный технопарк «БАЛТИКА-ЦОД»</h3>
+              <p class="project-desc">
+                Возведение на водонасыщенных грунтах: свайное поле из 640 буронабивных свай глубиной 22&nbsp;м, монолитный гидроизолированный ростверк B40&nbsp;W12 и&nbsp;система рекуперации тепла машзалов для теплоснабжения кампуса.
+              </p>
+              <div class="project-specs">
+                <div>
+                  <div class="p-spec-val">24,0&nbsp;МВт</div>
+                  <div class="p-spec-lbl">ИТ-мощность</div>
+                </div>
+                <div>
+                  <div class="p-spec-val">1&nbsp;200</div>
+                  <div class="p-spec-lbl">Стоек 42U</div>
+                </div>
+                <div>
+                  <div class="p-spec-val">1,14</div>
+                  <div class="p-spec-lbl">Факт. PUE</div>
+                </div>
+                <div>
+                  <div class="p-spec-val">13&nbsp;мес.</div>
+                  <div class="p-spec-lbl">Цикл СМР</div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="project-card">
+            <div class="project-visual">
+              <canvas class="proj-canvas" data-theme="jade"></canvas>
+              <span class="project-tier-badge">UPTIME TIER IV FAULT TOLERANT</span>
+              <span class="project-year-badge">ЕКАТЕРИНБУРГ • 2024</span>
+            </div>
+            <div class="project-body">
+              <h3 class="project-title">Промышленный дата-центр «УРАЛ-ЯДРО»</h3>
+              <p class="project-desc">
+                Защищенный железобетонный конструктив с&nbsp;экранированием ЭМИ, полной физической изоляцией энергоцентров Луча «А» и&nbsp;Луча «Б» (EI&nbsp;180) и&nbsp;работой в&nbsp;режиме естественного фрикулинга 310&nbsp;дней в&nbsp;году.
+              </p>
+              <div class="project-specs">
+                <div>
+                  <div class="p-spec-val">16,0&nbsp;МВт</div>
+                  <div class="p-spec-lbl">ИТ-мощность</div>
+                </div>
+                <div>
+                  <div class="p-spec-val">800</div>
+                  <div class="p-spec-lbl">Стоек 42U</div>
+                </div>
+                <div>
+                  <div class="p-spec-val">1,09</div>
+                  <div class="p-spec-lbl">Факт. PUE</div>
+                </div>
+                <div>
+                  <div class="p-spec-val">11&nbsp;мес.</div>
+                  <div class="p-spec-lbl">Цикл СМР</div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="project-card">
+            <div class="project-visual">
+              <canvas class="proj-canvas" data-theme="copper"></canvas>
+              <span class="project-tier-badge">TIER III + AI LIQUID COOLING</span>
+              <span class="project-year-badge">НОВОСИБИРСК • 2026</span>
+            </div>
+            <div class="project-body">
+              <h3 class="project-title">Суперкомпьютерный кластер «СИБИРЬ-ИИ»</h3>
+              <p class="project-desc">
+                Крупнейший за Уралом модульный кампус из четырех очередей, построенный по технологии заводской префабрикации DfMA: энергетические скиды 2N и&nbsp;насосные станции доставлялись на площадку в&nbsp;100% заводской готовности.
+              </p>
+              <div class="project-specs">
+                <div>
+                  <div class="p-spec-val">48,0&nbsp;МВт</div>
+                  <div class="p-spec-lbl">ИТ-мощность</div>
+                </div>
+                <div>
+                  <div class="p-spec-val">2&nbsp;400</div>
+                  <div class="p-spec-lbl">Стоек ИИ</div>
+                </div>
+                <div>
+                  <div class="p-spec-val">1,10</div>
+                  <div class="p-spec-lbl">Факт. PUE</div>
+                </div>
+                <div>
+                  <div class="p-spec-val">15&nbsp;мес.</div>
+                  <div class="p-spec-lbl">Цикл СМР</div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===============================================================
+         5. TECHNOLOGY PARTNERS ("НАШИ ПАРТНЕРЫ")
+         =============================================================== -->
+    <section id="partners" class="partners-section">
+      <div class="container">
+        <div class="eyebrow cobalt">ТЕХНОЛОГИЧЕСКАЯ КОМПЛЕКТАЦИЯ И ИНСТРУМЕНТАЛЬНЫЙ КОНТРОЛЬ</div>
+        <h2 class="display-h2">Наши партнеры и&nbsp;производители первого эшелона.</h2>
+        <p class="lead-text">
+          Прямые производственные квоты и&nbsp;собственная сборка НКУ/ГРЩ исключают санкционные и&nbsp;логистические задержки при комплектации строящихся ЦОД.
+        </p>
+
+        <div class="partners-matrix">
+          <div class="partner-box">
+            <span class="partner-role">СЕРТИФИКАЦИЯ И АУДИТ</span>
+            <div class="partner-name">Uptime Institute</div>
+            <p class="partner-note">Защита проектной документации (TCCF) и&nbsp;очная инструментальная приемка построенного объекта (TCDD&nbsp;/ TCOS) до уровня Tier&nbsp;IV Gold.</p>
+          </div>
+
+          <div class="partner-box">
+            <span class="partner-role">РУ 10/0,4 КВ, ИБП И ШИНЫ</span>
+            <div class="partner-name">Систэм Электрик</div>
+            <p class="partner-note">Ячейки среднего напряжения 10&nbsp;кВ, статические ИБП с&nbsp;Li-Ion (LFP) накопителями и&nbsp;магистральные медные шинопроводы 5000&nbsp;А.</p>
+          </div>
+
+          <div class="partner-box">
+            <span class="partner-role">ХОЛОДОСНАБЖЕНИЕ И CDU</span>
+            <div class="partner-name">Прецизионный холод</div>
+            <p class="partner-note">Безмасляные турбокор-чиллеры с&nbsp;косвенным фрикулингом, межрядные кондиционеры и&nbsp;станции жидкостного охлаждения Direct-to-Chip.</p>
+          </div>
+
+          <div class="partner-box">
+            <span class="partner-role">ДИЗЕЛЬ-ГЕНЕРАТОРНЫЕ СТАНЦИИ</span>
+            <div class="partner-name">Baudouin / КАМАЗ-ДГУ</div>
+            <p class="partner-note">Дизель-генераторные установки единичной мощностью 2000–3000&nbsp;кВА класса&nbsp;G3 (ISO&nbsp;8528-5) со 100% набросом нагрузки.</p>
+          </div>
+
+          <div class="partner-box">
+            <span class="partner-role">ЛАЗЕРНАЯ ГЕОДЕЗИЯ 5D BIM</span>
+            <div class="partner-name">Leica Geosystems</div>
+            <p class="partner-note">Роботизированные тахеометры TS16 (1") и&nbsp;лазерные 3D-сканеры RTC360 для ежедневного контроля геометрии конструкций.</p>
+          </div>
+
+          <div class="partner-box">
+            <span class="partner-role">ДЕФЕКТОСКОПИЯ И ЛНК</span>
+            <div class="partner-name">Hilti &amp; Fluke Pro</div>
+            <p class="partner-note">Георадары армирования Ferroscan PS&nbsp;300, тепловизоры Fluke Ti480 PRO, микроомметры МИКО-21 и&nbsp;дефектоскопы УД2В-П46.</p>
+          </div>
+
+          <div class="partner-box">
+            <span class="partner-role">АВТОМАТИКА АСУДД И BMS</span>
+            <div class="partner-name">Регул / ПЛК АСУ ТП</div>
+            <p class="partner-note">Отказоустойчивые программируемые контроллеры с&nbsp;горячим резервированием для управления АВР, ДЭС и&nbsp;микроклиматом.</p>
+          </div>
+
+          <div class="partner-box">
+            <span class="partner-role">ГАЗОВОЕ ПОЖАРОТУШЕНИЕ</span>
+            <div class="partner-name">Пожтехника / Novec</div>
+            <p class="partner-note">Двухступенчатые аспирационные извещатели VESDA и&nbsp;автоматические станции газового пожаротушения безопасным ГОТВ ФК-5-1-12.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===============================================================
+         6. FINAL CONFIGURATOR SECTION
+         =============================================================== -->
+    <section id="configurator" class="final-config-section">
+      <div class="container">
+        <div class="config-modal">
+          <div>
+            <div class="eyebrow">ПРЕДПРОЕКТНАЯ ОЦЕНКА ФИЗИЧЕСКИХ ОБЪЕМОВ СМР</div>
+            <h2 class="display-h2" style="font-size: clamp(24px, 3vw, 36px);">Сформируйте спецификацию вашего ЦОД.</h2>
+            <p class="story-p" style="margin-bottom: 20px;">
+              Выберите полезную ИТ-мощность кампуса и&nbsp;архитектуру отвода тепла для расчета ведомости строительных материалов, комплекта резервного энергоснабжения 2N и&nbsp;директивного графика работ.
+            </p>
+
+            <div style="font-size:12px; font-weight:700; color:var(--ink-secondary);">1. ПОЛЕЗНАЯ ИТ-МОЩНОСТЬ МАШИННЫХ ЗАЛОВ:</div>
+            <div class="choice-grid" id="mwButtons">
+              <button class="choice-btn" onclick="setCfgMw(8, this)"><strong>8&nbsp;МВт</strong><span>4 машзала</span></button>
+              <button class="choice-btn active" onclick="setCfgMw(16, this)"><strong>16&nbsp;МВт</strong><span>8 машзалов</span></button>
+              <button class="choice-btn" onclick="setCfgMw(32, this)"><strong>32&nbsp;МВт</strong><span>16 машзалов</span></button>
+              <button class="choice-btn" onclick="setCfgMw(64, this)"><strong>64&nbsp;МВт</strong><span>Гиперскейл</span></button>
+            </div>
+
+            <div style="font-size:12px; font-weight:700; color:var(--ink-secondary);">2. ИНЖЕНЕРНАЯ СХЕМА ОХЛАЖДЕНИЯ:</div>
+            <div class="choice-grid" style="grid-template-columns:1fr 1fr;" id="coolButtons">
+              <button class="choice-btn active" onclick="setCfgCool('air', this)">
+                <strong>Фрикулинг Чиллер N+2</strong><span>До 20&nbsp;кВт/стойка • PUE 1,14</span>
+              </button>
+              <button class="choice-btn" onclick="setCfgCool('liquid', this)">
+                <strong>СЖО Direct-to-Chip (CDU)</strong><span>До 120&nbsp;кВт/стойка • PUE 1,10</span>
+              </button>
+            </div>
+          </div>
+
+          <div style="background:var(--bg-stone); border:1px solid var(--border-strong); border-radius:26px; padding:30px; display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+              <div style="font-family:var(--font-mono); font-size:11px; font-weight:600; color:var(--accent-copper); margin-bottom:6px;">
+                ВЕДОМОСТЬ ФИЗИЧЕСКИХ ОБЪЕМОВ EPC
+              </div>
+              <div style="font-family:var(--font-display); font-size:23px; font-weight:800; margin-bottom:18px;" id="cfgOutTitle">
+                Кампус ЦОД 16,0 МВт Tier IV (Фрикулинг)
+              </div>
+
+              <div style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border-hairline); font-size:14px;">
+                <span style="color:var(--ink-secondary);">Монолитный железобетон B35 W8</span>
+                <strong id="cfgOutConcrete">14&nbsp;800&nbsp;м³</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border-hairline); font-size:14px;">
+                <span style="color:var(--ink-secondary);">Металлоконструкции каркаса С345</span>
+                <strong id="cfgOutSteel">1&nbsp;920&nbsp;тонн</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border-hairline); font-size:14px;">
+                <span style="color:var(--ink-secondary);">Медный шинопровод 5000 А (Лучи А+Б)</span>
+                <strong id="cfgOutCopper">2&nbsp;640&nbsp;п.&nbsp;м</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border-hairline); font-size:14px;">
+                <span style="color:var(--ink-secondary);">ДЭС 2N (ДГУ 2500 кВА) + ГПП 110 кВ</span>
+                <strong id="cfgOutDgu">16&nbsp;ед. + ГПП 2×25&nbsp;МВА</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between; padding:11px 0; font-size:14px;">
+                <span style="color:var(--ink-secondary);">Директивный срок сдачи под ключ (L5)</span>
+                <strong id="cfgOutTime" style="color:var(--accent-jade);">12&nbsp;месяцев</strong>
+              </div>
+            </div>
+
+            <div>
+              <button class="submit-btn" onclick="document.getElementById('cfgSentMsg').style.display='block'">
+                Запросить 5D BIM-паспорт и&nbsp;смету у&nbsp;службы ГИП
+              </button>
+              <div id="cfgSentMsg" style="display:none; margin-top:10px; font-size:12px; font-weight:600; color:var(--accent-jade); text-align:center;">
+                ✓ Спецификация сформирована и передана в дирекцию Шаулова Н. А.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="corp-footer">
+      <div class="footer-inner">
+        <div>
+          <strong style="color:var(--ink);">АО «МОНОЛИТ ПРО ИНЖИНИРИНГ» • ГЕНЕРАЛЬНЫЙ ДИРЕКТОР ШАУЛОВ Н. А.</strong><br/>
+          Проектирование, строительство и&nbsp;аттестация дата-центров Tier&nbsp;III&nbsp;/ Tier&nbsp;IV полного цикла.
+        </div>
+        <div style="font-family:var(--font-mono);">
+          ДОПУСК СРО I УРОВНЯ • СП 541.1325800 • ГОСТ Р 55724 • UPTIME INSTITUTE
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- =================================================================
+       FLICKER-FREE PBR 3D ENGINE (THREE.JS)
+       ================================================================= -->
+  <script>
+    function toggleMobileDrawer() {
+      document.getElementById('mobileDrawer').classList.toggle('open');
+    }
+
+    /* =====================================================================
+       1. PROCEDURAL PBR TEXTURES
+       ===================================================================== */
+    function createConcreteTexture() {
+      const c = document.createElement('canvas');
+      c.width = 512; c.height = 512;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#C9C3B8';
+      ctx.fillRect(0, 0, 512, 512);
+      for (let i = 0; i < 18000; i++) {
+        const v = 175 + Math.floor(Math.random() * 40);
+        ctx.fillStyle = `rgba(${v},${v-3},${v-8},0.28)`;
+        ctx.fillRect(Math.random() * 512, Math.random() * 512, 2, 2);
+      }
+      ctx.strokeStyle = 'rgba(80,76,70,0.22)';
+      ctx.lineWidth = 2;
+      for (let x = 0; x <= 512; x += 128) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, 512); ctx.stroke();
+      }
+      const tex = new THREE.CanvasTexture(c);
+      tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(4, 4);
+      return tex;
+    }
+
+    function createServerRackTexture() {
+      const c = document.createElement('canvas');
+      c.width = 256; c.height = 512;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#18191C';
+      ctx.fillRect(0, 0, 256, 512);
+      for (let y = 16; y < 496; y += 12) {
+        ctx.fillStyle = '#25272C';
+        ctx.fillRect(14, y, 228, 9);
+        ctx.fillStyle = (y % 36 === 0) ? '#28B463' : '#D97736';
+        ctx.fillRect(22, y + 3, 9, 3);
+        ctx.fillStyle = 'rgba(255,255,255,0.22)';
+        ctx.fillRect(42, y + 3, 140, 2);
+      }
+      return new THREE.CanvasTexture(c);
+    }
+
+    function createRaisedFloorTexture() {
+      const c = document.createElement('canvas');
+      c.width = 256; c.height = 256;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#D8D3C8';
+      ctx.fillRect(0, 0, 256, 256);
+      ctx.strokeStyle = '#9E988E';
+      ctx.lineWidth = 4;
+      ctx.strokeRect(0, 0, 256, 256);
+      ctx.fillStyle = '#524F4A';
+      for (let x = 24; x < 232; x += 16) {
+        for (let y = 24; y < 232; y += 16) {
+          ctx.fillRect(x, y, 5, 5);
+        }
+      }
+      const tex = new THREE.CanvasTexture(c);
+      tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(16, 10);
+      return tex;
+    }
+
+    function createDaylightEnvMap() {
+      const c = document.createElement('canvas');
+      c.width = 512; c.height = 256;
+      const ctx = c.getContext('2d');
+      const grad = ctx.createLinearGradient(0, 0, 0, 256);
+      grad.addColorStop(0, '#FFFFFF');
+      grad.addColorStop(0.48, '#EFECE6');
+      grad.addColorStop(0.52, '#D5CFC4');
+      grad.addColorStop(1, '#ABA498');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 512, 256);
+      ctx.fillStyle = '#FFFDF9';
+      ctx.fillRect(60, 20, 160, 45);
+      ctx.fillStyle = '#FFE3CC';
+      ctx.fillRect(300, 35, 140, 35);
+      const tex = new THREE.CanvasTexture(c);
+      tex.mapping = THREE.EquirectangularReflectionMapping;
+      return tex;
+    }
+
+    /* =====================================================================
+       2. INITIALIZE THREE.JS SCENE (DEPTH-BUFFER STABILIZED, NO Z-FIGHTING)
+       ===================================================================== */
+    const container = document.getElementById('webgl-viewport');
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0xECE7DF, 0.0095);
+
+    const camera = new THREE.PerspectiveCamera(36, window.innerWidth / window.innerHeight, 2.0, 160);
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: false,
+      powerPreference: 'high-performance'
+    });
+    renderer.setClearColor(0xECE7DF, 1);
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.08;
+    container.appendChild(renderer.domElement);
+
+    const envMap = createDaylightEnvMap();
+    scene.environment = envMap;
+
+    const hemiLight = new THREE.HemisphereLight(0xFFFDF9, 0xC7C0B4, 0.92);
+    scene.add(hemiLight);
+
+    const sunLight = new THREE.DirectionalLight(0xFFF7EB, 1.85);
+    sunLight.position.set(34, 54, 32);
+    sunLight.castShadow = true;
+    sunLight.shadow.mapSize.width = 2048;
+    sunLight.shadow.mapSize.height = 2048;
+    const d = 32;
+    sunLight.shadow.camera.near = 12;
+    sunLight.shadow.camera.far = 125;
+    sunLight.shadow.camera.left = -d;
+    sunLight.shadow.camera.right = d;
+    sunLight.shadow.camera.top = d;
+    sunLight.shadow.camera.bottom = -d;
+    sunLight.shadow.bias = -0.0008;
+    sunLight.shadow.normalBias = 0.02;
+    scene.add(sunLight);
+
+    const fillLight = new THREE.DirectionalLight(0xE8DEC8, 0.75);
+    fillLight.position.set(-32, 22, -24);
+    scene.add(fillLight);
+
+    /* =====================================================================
+       3. FLICKER-FREE OPAQUE PBR MATERIALS (polygonOffset enabled)
+       ===================================================================== */
+    const concreteTex = createConcreteTexture();
+    const rackTex = createServerRackTexture();
+    const floorTex = createRaisedFloorTexture();
+
+    const matEarthPad = new THREE.MeshStandardMaterial({
+      color: 0xD8D1C5, roughness: 0.92, metalness: 0.04,
+      polygonOffset: true, polygonOffsetFactor: 2, polygonOffsetUnits: 2
+    });
+
+    // Strictly opaque (`transparent: false`) so Three.js never depth-sort-flickers!
+    const matConcrete = new THREE.MeshStandardMaterial({
+      map: concreteTex, bumpMap: concreteTex, bumpScale: 0.05,
+      color: 0xDED9CE, roughness: 0.68, metalness: 0.08, envMap, envMapIntensity: 0.45,
+      polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1
+    });
+
+    const matRebar = new THREE.MeshStandardMaterial({
+      color: 0x9E4B22, roughness: 0.38, metalness: 0.82, envMap, envMapIntensity: 1.1
+    });
+
+    const matSteelAnthracite = new THREE.MeshStandardMaterial({
+      color: 0x282A2E, roughness: 0.32, metalness: 0.86, envMap, envMapIntensity: 1.3
+    });
+
+    const matCopperBus = new THREE.MeshStandardMaterial({
+      color: 0xC85E28, roughness: 0.20, metalness: 0.94, envMap, envMapIntensity: 1.8,
+      emissive: 0x000000, emissiveIntensity: 0
+    });
+
+    const matDguContainer = new THREE.MeshStandardMaterial({
+      color: 0x3D434A, roughness: 0.38, metalness: 0.75, envMap, envMapIntensity: 1.1
+    });
+
+    const matChilledPipeBlue = new THREE.MeshStandardMaterial({
+      color: 0x1D5C96, roughness: 0.25, metalness: 0.80, envMap, envMapIntensity: 1.3
+    });
+
+    const matReturnPipeRed = new THREE.MeshStandardMaterial({
+      color: 0xB83322, roughness: 0.25, metalness: 0.80, envMap, envMapIntensity: 1.3
+    });
+
+    const matFireGasRed = new THREE.MeshStandardMaterial({
+      color: 0xC8281E, roughness: 0.24, metalness: 0.75, envMap, envMapIntensity: 1.4
+    });
+
+    const matFiberTrayYellow = new THREE.MeshStandardMaterial({
+      color: 0xD98A1C, roughness: 0.30, metalness: 0.72, envMap, envMapIntensity: 1.2
+    });
+
+    const matRaisedFloor = new THREE.MeshStandardMaterial({
+      map: floorTex, roughness: 0.48, metalness: 0.45, envMap, envMapIntensity: 0.8
+    });
+
+    const matServerRack = new THREE.MeshStandardMaterial({
+      map: rackTex, roughness: 0.28, metalness: 0.78, envMap, envMapIntensity: 1.2
+    });
+
+    // Only glass containment uses transparency, with depthWrite: false and high renderOrder
+    const matGlassContainment = new THREE.MeshStandardMaterial({
+      color: 0x5C9ED6, transparent: true, opacity: 0.28, depthWrite: false,
+      roughness: 0.12, metalness: 0.2, envMap, envMapIntensity: 1.5
+    });
+
+    const matTitaniumFacade = new THREE.MeshStandardMaterial({
+      color: 0xABA59B, roughness: 0.30, metalness: 0.78, envMap, envMapIntensity: 1.3
+    });
+
+    /* =====================================================================
+       4. ASSEMBLE THE 8-STAGE DATA CENTER IN 3D
+       ===================================================================== */
+    const dcRoot = new THREE.Group();
+    scene.add(dcRoot);
+
+    const animatedParts = [];
+    const cutawayParts = []; // Roof & facade parts that smoothly lift up in Stage 8 (L5 Inspection)
+
+    function registerPart(mesh, startP, endP, fromY, toY, scaleAxis = null, isCutaway = false) {
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      dcRoot.add(mesh);
+      animatedParts.push({ mesh, startP, endP, fromY, toY, scaleAxis, isCutaway });
+      if (isCutaway) cutawayParts.push({ mesh, baseToY: toY });
+    }
+
+    // Excavation Pit Base (Offset cleanly below Y = -0.85 to prevent Z-fighting)
+    const pitMesh = new THREE.Mesh(new THREE.BoxGeometry(42, 1.2, 30), matEarthPad);
+    pitMesh.position.set(0, -1.55, 0);
+    pitMesh.receiveShadow = true;
+    dcRoot.add(pitMesh);
+
+    const gridHelper = new THREE.GridHelper(48, 48, 0xB55422, 0xCBC4B8);
+    gridHelper.position.y = -0.90;
+    dcRoot.add(gridHelper);
+
+    // --- STAGE 1 (0.00 -> 0.12): 36 BORED PILES + COPPER GROUNDING GRID ---
+    const pileGeo = new THREE.CylinderGeometry(0.45, 0.45, 5.0, 18);
+    const cageGeo = new THREE.CylinderGeometry(0.32, 0.32, 1.3, 10, 1, true);
+    let pileIdx = 0;
+    for (let ix = -5; ix <= 5; ix += 2) {
+      for (let iz = -5; iz <= 5; iz += 2) {
+        const x = ix * 2.3;
+        const z = iz * 1.65;
+        const dly = (pileIdx / 36) * 0.06;
+
+        const pile = new THREE.Mesh(pileGeo, matConcrete);
+        pile.position.set(x, -3.3, z);
+        registerPart(pile, 0.00 + dly, 0.06 + dly, -8.5, -3.3);
+
+        const cage = new THREE.Mesh(cageGeo, matRebar);
+        cage.position.set(x, -0.35, z);
+        registerPart(cage, 0.02 + dly, 0.08 + dly, -5.0, -0.35);
+        pileIdx++;
+      }
+    }
+
+    const groundBusGeo = new THREE.BoxGeometry(26.0, 0.06, 0.12);
+    for (let gz = -8; gz <= 8; gz += 4) {
+      const gStrip = new THREE.Mesh(groundBusGeo, matCopperBus);
+      gStrip.position.set(0, -0.78, gz);
+      registerPart(gStrip, 0.05, 0.11, 2.2, -0.78, 'x');
+    }
+
+    // --- STAGE 2 (0.12 -> 0.25): Ø28 REBAR MATRIX & 900MM MONOLITHIC RAFT SLAB ---
+    const rebarXGeo = new THREE.CylinderGeometry(0.05, 0.05, 25.2, 8);
+    rebarXGeo.rotateZ(Math.PI / 2);
+    for (let i = 0; i < 15; i++) {
+      const z = -7.0 + i * 1.0;
+      const rb = new THREE.Mesh(rebarXGeo, matRebar);
+      rb.position.set(0, 0.68, z); // Slightly above slab top during pour, or embedded
+      const dly = (i / 15) * 0.04;
+      registerPart(rb, 0.12 + dly, 0.18 + dly, 4.2, 0.42);
+    }
+
+    const slabMesh = new THREE.Mesh(new THREE.BoxGeometry(26.4, 0.90, 19.8), matConcrete);
+    slabMesh.position.set(0, 0.10, 0);
+    registerPart(slabMesh, 0.18, 0.25, 0.10, 0.10, 'y');
+
+    // Internal EI-120 Fireproof Wall separating Hall & Energy Wing
+    const coreWall = new THREE.Mesh(new THREE.BoxGeometry(0.34, 7.8, 18.6), matConcrete);
+    coreWall.position.set(7.4, 4.45, 0);
+    registerPart(coreWall, 0.20, 0.26, 4.45, 4.45, 'y');
+
+    // --- STAGE 3 (0.25 -> 0.37): STRUCTURAL STEEL COLUMNS & 24M TRUSSES ---
+    const colGeo = new THREE.BoxGeometry(0.46, 7.6, 0.46);
+    let colIdx = 0;
+    for (let ix = -5; ix <= 5; ix += 2) {
+      for (let iz of [-8.8, 0, 8.8]) {
+        if (iz === 0 && ix < 3) continue;
+        const x = ix * 2.35;
+        const col = new THREE.Mesh(colGeo, matSteelAnthracite);
+        col.position.set(x, 4.35, iz);
+        const dly = (colIdx / 16) * 0.05;
+        registerPart(col, 0.25 + dly, 0.32 + dly, 4.35, 4.35, 'y');
+        colIdx++;
+      }
+    }
+
+    const trussChordGeo = new THREE.BoxGeometry(0.36, 0.52, 18.2);
+    for (let i = 0; i < 6; i++) {
+      const x = -11.75 + i * 4.7;
+      const truss = new THREE.Mesh(trussChordGeo, matSteelAnthracite);
+      truss.position.set(x, 8.35, 0);
+      const dly = (i / 6) * 0.05;
+      registerPart(truss, 0.31 + dly, 0.37 + dly, 15.5, 8.35);
+    }
+
+    // --- STAGE 4 (0.37 -> 0.50): EXTERIOR 110/10 KV SUBSTATION & DGU 2N YARD ---
+    const dguBoxGeo = new THREE.BoxGeometry(3.3, 2.4, 1.8);
+    const exhaustGeo = new THREE.CylinderGeometry(0.14, 0.14, 3.1, 12);
+    for (let i = 0; i < 6; i++) {
+      const dx = -10.5 + i * 4.2;
+      const dly = (i / 6) * 0.05;
+      const dgu = new THREE.Mesh(dguBoxGeo, matDguContainer);
+      dgu.position.set(dx, 1.25, 11.7);
+      registerPart(dgu, 0.37 + dly, 0.44 + dly, 9.0, 1.25);
+
+      const stack = new THREE.Mesh(exhaustGeo, matTitaniumFacade);
+      stack.position.set(dx + 1.1, 2.35, 11.7);
+      registerPart(stack, 0.39 + dly, 0.46 + dly, 10.0, 2.35);
+    }
+
+    const hvPad = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.45, 14.0), matConcrete);
+    hvPad.position.set(-16.2, -0.45, 0);
+    registerPart(hvPad, 0.40, 0.46, -0.45, -0.45, 'y');
+
+    for (let hz of [-4.0, 4.0]) {
+      const hvTx = new THREE.Mesh(new THREE.BoxGeometry(3.0, 3.2, 3.6), matCopperBus);
+      hvTx.position.set(-16.2, 1.38, hz);
+      registerPart(hvTx, 0.42, 0.49, 9.5, 1.38);
+
+      const gantry = new THREE.Mesh(new THREE.BoxGeometry(0.25, 6.2, 3.2), matSteelAnthracite);
+      gantry.position.set(-16.2, 3.05, hz);
+      registerPart(gantry, 0.44, 0.50, 11.5, 3.05);
+    }
+
+    // --- STAGE 5 (0.50 -> 0.62): INDOOR 2N TRANSFORMERS, LI-ION UPS & 5000A BUSWAYS ---
+    const txGeo = new THREE.BoxGeometry(2.5, 3.2, 2.8);
+    for (let i = 0; i < 4; i++) {
+      const z = -6.3 + i * 4.2;
+      const tx = new THREE.Mesh(txGeo, i % 2 === 0 ? matCopperBus : matSteelAnthracite);
+      tx.position.set(9.8, 2.18, z);
+      registerPart(tx, 0.50 + i * 0.015, 0.56 + i * 0.015, 10.5, 2.18);
+    }
+
+    const busBarGeo = new THREE.BoxGeometry(21.2, 0.28, 0.44);
+    [-5.4, -4.6, 4.6, 5.4].forEach((bz, idx) => {
+      const bus = new THREE.Mesh(busBarGeo, matCopperBus);
+      bus.position.set(-1.2, 6.85, bz);
+      registerPart(bus, 0.54 + idx * 0.015, 0.62 + idx * 0.015, 12.0, 6.85, 'x');
+    });
+
+    // --- STAGE 6 (0.62 -> 0.75): DN300 CHILLED HEADERS & 8 ROOFTOP CHILLERS ---
+    const pipeHeaderGeo = new THREE.CylinderGeometry(0.23, 0.23, 20.8, 16);
+    pipeHeaderGeo.rotateZ(Math.PI / 2);
+    const pipeSupply = new THREE.Mesh(pipeHeaderGeo, matChilledPipeBlue);
+    pipeSupply.position.set(-1.2, 1.02, -7.2);
+    registerPart(pipeSupply, 0.62, 0.68, 1.02, 1.02, 'x');
+
+    const pipeReturn = new THREE.Mesh(pipeHeaderGeo, matReturnPipeRed);
+    pipeReturn.position.set(-1.2, 1.02, 7.2);
+    registerPart(pipeReturn, 0.63, 0.69, 1.02, 1.02, 'x');
+
+    // Roof deck & chillers marked `isCutaway = true` so they smoothly elevate in Stage 8!
+    const roofDeck = new THREE.Mesh(new THREE.BoxGeometry(26.4, 0.44, 19.2), matConcrete);
+    roofDeck.position.set(0, 8.85, 0);
+    registerPart(roofDeck, 0.65, 0.71, 16.5, 8.85, null, true);
+
+    const chillerGeo = new THREE.BoxGeometry(4.4, 2.1, 2.8);
+    const fanBladeGeo = new THREE.BoxGeometry(1.5, 0.08, 0.28);
+    const chillerFans = [];
+
+    for (let cx = 0; cx < 4; cx++) {
+      for (let cz = 0; cz < 2; cz++) {
+        const x = -8.5 + cx * 5.6;
+        const z = -4.2 + cz * 8.4;
+        const dly = ((cx * 2 + cz) / 8) * 0.05;
+
+        const chiller = new THREE.Mesh(chillerGeo, matTitaniumFacade);
+        chiller.position.set(x, 10.15, z);
+        registerPart(chiller, 0.68 + dly, 0.74 + dly, 18.0, 10.15, null, true);
+
+        const fanGroup = new THREE.Group();
+        fanGroup.position.set(x, 11.25, z);
+        const b1 = new THREE.Mesh(fanBladeGeo, matSteelAnthracite);
+        const b2 = new THREE.Mesh(fanBladeGeo, matSteelAnthracite);
+        b2.rotation.y = Math.PI / 2;
+        fanGroup.add(b1, b2);
+        chillerFans.push(fanGroup);
+        registerPart(fanGroup, 0.69 + dly, 0.75 + dly, 19.0, 11.25, null, true);
+      }
+    }
+
+    // --- STAGE 7 (0.75 -> 0.88): RAISED FLOOR, 40 RACKS, SKS FIBER & NOVEC 1230 ---
+    const rFloor = new THREE.Mesh(new THREE.BoxGeometry(19.0, 0.18, 16.2), matRaisedFloor);
+    rFloor.position.set(-2.4, 1.58, 0);
+    registerPart(rFloor, 0.75, 0.80, 5.8, 1.58);
+
+    const rackGeo = new THREE.BoxGeometry(1.15, 3.4, 1.35);
+    const rowZ = [-5.6, -2.4, 2.4, 5.6];
+    let rackCount = 0;
+    rowZ.forEach((rz) => {
+      for (let rxIdx = 0; rxIdx < 10; rxIdx++) {
+        const rx = -10.4 + rxIdx * 1.68;
+        const rack = new THREE.Mesh(rackGeo, matServerRack);
+        rack.position.set(rx, 3.38, rz);
+        const dly = (rackCount / 40) * 0.06;
+        registerPart(rack, 0.77 + dly, 0.84 + dly, 10.0, 3.38);
+        rackCount++;
+      }
+    });
+
+    const fiberTrayGeo = new THREE.BoxGeometry(18.4, 0.12, 0.32);
+    [-3.8, 3.8].forEach((fz) => {
+      const fTray = new THREE.Mesh(fiberTrayGeo, matFiberTrayYellow);
+      fTray.position.set(-2.4, 5.88, fz);
+      registerPart(fTray, 0.82, 0.86, 10.2, 5.88, 'x');
+    });
+
+    const canopyGeo = new THREE.BoxGeometry(16.6, 0.10, 3.3);
+    [-4.0, 4.0].forEach((cz) => {
+      const glass = new THREE.Mesh(canopyGeo, matGlassContainment);
+      glass.renderOrder = 10;
+      glass.position.set(-2.8, 5.18, cz);
+      registerPart(glass, 0.83, 0.87, 9.2, 5.18);
+    });
+
+    const cylGeo = new THREE.CylinderGeometry(0.18, 0.18, 1.9, 12);
+    for (let g = 0; g < 10; g++) {
+      const cyl = new THREE.Mesh(cylGeo, matFireGasRed);
+      cyl.position.set(6.5, 2.58, -7.2 + g * 0.55);
+      registerPart(cyl, 0.84, 0.88, 7.2, 2.58);
+    }
+
+    const backWall = new THREE.Mesh(new THREE.BoxGeometry(26.2, 8.1, 0.32), matTitaniumFacade);
+    backWall.position.set(0, 4.6, -9.65);
+    registerPart(backWall, 0.85, 0.89, 14.5, 4.6, null, true);
+
+    const sideWall = new THREE.Mesh(new THREE.BoxGeometry(0.32, 8.1, 19.0), matTitaniumFacade);
+    sideWall.position.set(13.05, 4.6, 0);
+    registerPart(sideWall, 0.85, 0.89, 14.5, 4.6, null, true);
+
+    /* =====================================================================
+       5. RESPONSIVE SPLIT-STAGE CALIBRATION (DESKTOP VS MOBILE)
+       ===================================================================== */
+    let isMobileViewport = window.innerWidth <= 1024;
+    let lastWinWidth = window.innerWidth;
+    let lastWinHeight = window.innerHeight;
+
+    function calibrate3DViewportForDevice() {
+      isMobileViewport = window.innerWidth <= 1024;
+      if (isMobileViewport) {
+        dcRoot.position.set(0, 4.6, 0);
+        camera.fov = 45;
+      } else {
+        dcRoot.position.set(4.5, -2.2, 0);
+        camera.fov = 36;
+      }
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+    }
+    calibrate3DViewportForDevice();
+
+    /* =====================================================================
+       6. SCROLL CHOREOGRAPHY & CLEAN STAGE 8 EXPLODED CUTAWAY
+       ===================================================================== */
+    const scrollTrack = document.getElementById('scrollTrack');
+    const timelapseDock = document.getElementById('timelapseDock');
+
+    let targetBuildP = 0.89;
+    let smoothBuildP = 0.89;
+
+    let targetCamPos = new THREE.Vector3(-23, 13, 28);
+    let targetCamLook = new THREE.Vector3(1.0, 4.0, 0);
+    let currentCamPos = new THREE.Vector3(-23, 13, 28);
+    let currentCamLook = new THREE.Vector3(1.0, 4.0, 0);
+
+    const hudMetadata = [
+      { tag: 'ЭТАП 01 • КЖ0 И ЗАЗЕМЛЕНИЕ', title: '36 свай Ø600 мм и контур 0,28 Ом', elev: '-16,000 м ... -0,780 м', tool: 'Спектр-4 + MRU-200', tol: '100% сплошность бетона' },
+      { tag: 'ЭТАП 02 • МОНОЛИТ КЖ', title: 'Арматура Ø28, плита B35 и брандмауэр', elev: '-0,780 м ... +4,450 м', tool: 'Hilti Ferroscan PS 300', tol: 'Защитный слой 45,0 мм' },
+      { tag: 'ЭТАП 03 • МЕТАЛЛОКАРКАС КМ', title: 'Двутавровые колонны и фермы 24 м', elev: '0,000 м ... +8,350 м', tool: 'Тахеометр Leica TS16', tol: 'Отклонение ±1,1 мм' },
+      { tag: 'ЭТАП 04 • ГПП 110 КВ И ДЭС 2N', title: 'Подстанция 2×25 МВА и ДГУ 2500 кВА', elev: 'Внешний энергопериметр', tool: 'Комплекс РЗА РЕТОМ-61', tol: 'Синхронизация ДГУ 8,4 с' },
+      { tag: 'ЭТАП 05 • ЭНЕРГОЦЕНТР 2N', title: 'Трансформаторы, ИБП и шины 5000 А', elev: '+2,180 м ... +6,850 м', tool: 'Микроомметр МИКО-21', tol: 'Контакты 7,1 мкОм' },
+      { tag: 'ЭТАП 06 • ХОЛОДОЦЕНТР N+2', title: 'Коллекторы DN300 и 8 чиллеров', elev: '+1,020 м ... +11,250 м', tool: 'УЗК дефектоскоп УД2В-П46', tol: '16,0 бар / PUE 1,12' },
+      { tag: 'ЭТАП 07 • МАШЗАЛ И АУГПТ', title: 'Стойки ИИ, СКС и газ Novec 1230', elev: '+1,580 м ... +5,880 м', tool: 'Аэродверь + OTDR', tol: 'ISO Class 8 (+18,5 Па)' },
+      { tag: 'ЭТАП 08 • КОМИССИОНИНГ L1–L5', title: 'Тест блэкаутом 72 ч (Pull-the-Plug)', elev: 'ВСКРЫТИЕ КРОВЛИ (РАЗРЕЗ)', tool: 'Тепловизор Fluke Ti480 PRO', tol: '0,0 мс • TIER IV GOLD' }
+    ];
+
+    const camKeyframes = [
+      { pos: [-19, 13, 25], look: [2, -2, 0] },
+      { pos: [-16, 16, 23], look: [2, 0.5, 0] },
+      { pos: [-22, 14, 27], look: [2, 4.0, 0] },
+      { pos: [-27, 15, 30], look: [-2, 2.5, 3] },
+      { pos: [-13, 11, 21], look: [4, 4.5, 0] },
+      { pos: [-24, 19, 26], look: [1, 7.0, 0] },
+      { pos: [-16, 10, 19], look: [-1, 3.5, 0] },
+      { pos: [-19, 15, 23], look: [1, 4.2, 0] }
+    ];
+
+    function setHudText(tag, title, elev, tool, tol) {
+      document.getElementById('hudTag').textContent = tag;
+      document.getElementById('hudNodeTitle').textContent = title;
+      document.getElementById('hudElev').textContent = elev;
+      document.getElementById('hudTool').textContent = tool;
+      document.getElementById('hudTol').textContent = tol;
+    }
+
+    function handleWindowScroll() {
+      const rect = scrollTrack.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const mobDist = isMobileViewport ? 1.25 : 1.0;
+
+      if (rect.top > vh * 0.45) {
+        timelapseDock.classList.remove('visible');
+        targetBuildP = 0.89; // 100% assembled campus
+
+        if (window.scrollY < vh * 0.65) {
+          targetCamPos.set(-23 * mobDist, 13, 28 * mobDist);
+          targetCamLook.set(isMobileViewport ? 0 : 1.0, 4.0, 0);
+          setHudText(
+            'КАМЕРА 00 • ФЛАГМАНСКИЙ КАМПУС TIER IV',
+            'Готовый дата-центр 16,0 МВт (100% сборка)',
+            'Промышленная эксплуатация',
+            'АСУДД / BMS + BIM LOD 500',
+            '2N Fault Tolerant (99,995%)'
+          );
+        } else {
+          targetCamPos.set(-26 * mobDist, 20, 29 * mobDist);
+          targetCamLook.set(0, 3.5, 0);
+          setHudText(
+            'КАМЕРА КРАНА • ГЕНПЛАН КАМПУСА',
+            'Здание ЦОД + ГПП 110 кВ + Парк ДГУ 2N',
+            'Персональный контроль ГД',
+            'Шаулов Николай Александрович',
+            'Гарантия SLA 99,995%'
+          );
+        }
+      } else if (rect.bottom > vh * 0.55) {
+        timelapseDock.classList.add('visible');
+
+        const scrollable = Math.max(1, scrollTrack.offsetHeight - vh);
+        const rawP = Math.max(0, Math.min(1, -rect.top / scrollable));
+        targetBuildP = rawP;
+
+        const kfScaled = rawP * (camKeyframes.length - 1);
+        const kfA = Math.floor(kfScaled);
+        const kfB = Math.min(camKeyframes.length - 1, kfA + 1);
+        const kfT = kfScaled - kfA;
+
+        targetCamPos.set(
+          THREE.MathUtils.lerp(camKeyframes[kfA].pos[0], camKeyframes[kfB].pos[0], kfT) * mobDist,
+          THREE.MathUtils.lerp(camKeyframes[kfA].pos[1], camKeyframes[kfB].pos[1], kfT),
+          THREE.MathUtils.lerp(camKeyframes[kfA].pos[2], camKeyframes[kfB].pos[2], kfT) * mobDist
+        );
+        targetCamLook.set(
+          isMobileViewport ? 0 : THREE.MathUtils.lerp(camKeyframes[kfA].look[0], camKeyframes[kfB].look[0], kfT),
+          THREE.MathUtils.lerp(camKeyframes[kfA].look[1], camKeyframes[kfB].look[1], kfT),
+          THREE.MathUtils.lerp(camKeyframes[kfA].look[2], camKeyframes[kfB].look[2], kfT)
+        );
+
+        const phaseIdx = Math.min(7, Math.floor(rawP * 8));
+        const meta = hudMetadata[phaseIdx];
+        setHudText(meta.tag, meta.title, meta.elev, meta.tool, meta.tol);
+
+        const btns = document.querySelectorAll('#dockStageButtons .dock-stage-btn');
+        btns.forEach((b, i) => b.classList.toggle('active', i === phaseIdx));
+
+        const day = Math.max(1, Math.min(365, Math.round(1 + rawP * 364)));
+        document.getElementById('dockDayText').textContent =
+          `ДЕНЬ ${String(day).padStart(3, '0')} / 365 • 8-ЭТАПНЫЙ 3D-ТАЙМЛАПС СТРОИТЕЛЬСТВА`;
+        document.getElementById('dockPercentText').textContent =
+          `ГОТОВНОСТЬ СМР: ${Math.round(rawP * 100)}%`;
+        document.getElementById('dockProgressBar').style.width = `${(rawP * 100).toFixed(1)}%`;
+      } else {
+        timelapseDock.classList.remove('visible');
+        targetBuildP = 0.89;
+        targetCamPos.set(-25 * mobDist, 16, 29 * mobDist);
+        targetCamLook.set(isMobileViewport ? 0 : 1.5, 4.0, 0);
+      }
+    }
+
+    window.addEventListener('scroll', handleWindowScroll, { passive: true });
+
+    function scrollToPhase(phaseIdx) {
+      const steps = document.querySelectorAll('.story-step');
+      if (steps[phaseIdx]) {
+        window.scrollTo({
+          top: steps[phaseIdx].offsetTop,
+          behavior: 'smooth'
+        });
+      }
+    }
+
+    function smoothstep(min, max, value) {
+      const x = Math.max(0, Math.min(1, (value - min) / (max - min)));
+      return x * x * (3 - 2 * x);
+    }
+
+    const clock = new THREE.Clock();
+
+    function animate3D() {
+      requestAnimationFrame(animate3D);
+      const elapsed = clock.getElapsedTime();
+
+      smoothBuildP += (targetBuildP - smoothBuildP) * 0.075;
+      currentCamPos.lerp(targetCamPos, 0.065);
+      currentCamLook.lerp(targetCamLook, 0.065);
+
+      const swayX = Math.sin(elapsed * 0.32) * 0.55;
+      const swayZ = Math.cos(elapsed * 0.32) * 0.55;
+      camera.position.set(currentCamPos.x + swayX, currentCamPos.y, currentCamPos.z + swayZ);
+      camera.lookAt(currentCamLook);
+
+      const p = smoothBuildP;
+      const cutawayLift = smoothstep(0.895, 0.965, p) * 6.8; // Smooth architectural roof lift in Stage 8
+
+      for (let i = 0; i < animatedParts.length; i++) {
+        const part = animatedParts[i];
+        const localT = smoothstep(part.startP, part.endP, p);
+        part.mesh.visible = localT > 0.002;
+
+        if (part.mesh.visible) {
+          let targetY = THREE.MathUtils.lerp(part.fromY, part.toY, localT);
+          if (part.isCutaway && cutawayLift > 0) {
+            targetY += cutawayLift;
+          }
+          part.mesh.position.y = targetY;
+
+          if (part.scaleAxis === 'y') {
+            part.mesh.scale.y = Math.max(0.001, localT);
+          } else if (part.scaleAxis === 'x') {
+            part.mesh.scale.x = Math.max(0.001, localT);
+          } else {
+            const s = 0.25 + 0.75 * localT;
+            part.mesh.scale.set(s, s, s);
+          }
+        }
+      }
+
+      chillerFans.forEach((fg, idx) => {
+        if (fg.visible) fg.rotation.y = elapsed * 5.5 + idx;
+      });
+
+      // Stage 8 Thermal Busway Glow (Smooth deterministic wave, zero random flickering!)
+      const thermalFactor = smoothstep(0.895, 0.96, p);
+      matCopperBus.emissive.setHex(0xD9480F);
+      matCopperBus.emissiveIntensity = thermalFactor * (0.85 + 0.2 * Math.sin(elapsed * 3.0));
+
+      renderer.render(scene, camera);
+    }
+
+    // Prevent mobile URL bar hide/show from triggering resize flicker!
+    window.addEventListener('resize', () => {
+      const wDiff = Math.abs(window.innerWidth - lastWinWidth);
+      const hDiff = Math.abs(window.innerHeight - lastWinHeight);
+      if (wDiff > 10 || hDiff > 130) {
+        lastWinWidth = window.innerWidth;
+        lastWinHeight = window.innerHeight;
+        calibrate3DViewportForDevice();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderPortfolioCanvases();
+      }
+    });
+
+    handleWindowScroll();
+    animate3D();
+
+    /* =====================================================================
+       7. ARCHITECTURAL DAYLIGHT RENDERER FOR COMPLETED PROJECT CARDS
+       ===================================================================== */
+    function renderPortfolioCanvases() {
+      document.querySelectorAll('.proj-canvas').forEach((canvas) => {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = Math.floor(rect.width * dpr);
+        canvas.height = Math.floor(rect.height * dpr);
+        const ctx = canvas.getContext('2d');
+        ctx.save();
+        ctx.scale(dpr, dpr);
+        const W = rect.width;
+        const H = rect.height;
+
+        const grad = ctx.createLinearGradient(0, 0, 0, H);
+        grad.addColorStop(0, '#E8E2D8');
+        grad.addColorStop(1, '#D5CEC2');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, H);
+
+        ctx.strokeStyle = 'rgba(22,21,20,0.06)';
+        ctx.lineWidth = 1;
+        for (let x = 0; x < W; x += 28) {
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+        }
+
+        const theme = canvas.dataset.theme;
+        const accent = theme === 'copper' ? '#B55422' : (theme === 'jade' ? '#1D6844' : '#1C4E80');
+
+        const bX = W * 0.12;
+        const bY = H * 0.34;
+        const bW = W * 0.76;
+        const bH = H * 0.52;
+
+        // Rooftop chillers
+        ctx.fillStyle = '#524F4A';
+        for (let cx = bX + 18; cx < bX + bW - 36; cx += 46) {
+          ctx.fillRect(cx, bY - 14, 34, 14);
+        }
+
+        // Main Concrete & Titanium Facade
+        ctx.fillStyle = '#F6F3EE';
+        ctx.strokeStyle = '#161514';
+        ctx.lineWidth = 1.5;
+        ctx.fillRect(bX, bY, bW, bH);
+        ctx.strokeRect(bX, bY, bW, bH);
+
+        ctx.fillStyle = accent;
+        ctx.fillRect(bX, bY + 16, bW, 4);
+
+        for (let lx = bX + 14; lx < bX + bW - 14; lx += 12) {
+          ctx.fillStyle = 'rgba(22,21,20,0.16)';
+          ctx.fillRect(lx, bY + 28, 4, bH - 42);
+        }
+
+        // Exterior DGU Containers
+        for (let dx = bX + 10; dx < bX + bW - 20; dx += 52) {
+          ctx.fillStyle = '#2A2927';
+          ctx.fillRect(dx, bY + bH - 18, 38, 18);
+          ctx.strokeStyle = accent;
+          ctx.strokeRect(dx, bY + bH - 18, 38, 18);
+        }
+
+        ctx.restore();
+      });
+    }
+    setTimeout(renderPortfolioCanvases, 80);
+
+    /* =====================================================================
+       8. CONFIGURATOR LOGIC
+       ===================================================================== */
+    let selectedMw = 16;
+    let selectedCool = 'air';
+
+    function setCfgMw(mw, btn) {
+      selectedMw = mw;
+      document.querySelectorAll('#mwButtons .choice-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      refreshCfgOutput();
+    }
+
+    function setCfgCool(cool, btn) {
+      selectedCool = cool;
+      document.querySelectorAll('#coolButtons .choice-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      refreshCfgOutput();
+    }
+
+    function refreshCfgOutput() {
+      const dguUnits = selectedMw; // 16 units of 2500 kVA for 16 MW 2N
+      const subMva = selectedMw <= 16 ? '2×25 МВА' : (selectedMw === 32 ? '2×40 МВА' : '2×80 МВА');
+      document.getElementById('cfgOutTitle').textContent =
+        `Кампус ЦОД ${selectedMw},0 МВт Tier IV (${selectedCool === 'liquid' ? 'СЖО ИИ' : 'Фрикулинг'})`;
+      document.getElementById('cfgOutConcrete').textContent = `${(selectedMw * 925).toLocaleString('ru-RU')} м³`;
+      document.getElementById('cfgOutSteel').textContent = `${(selectedMw * 120).toLocaleString('ru-RU')} тонн`;
+      document.getElementById('cfgOutCopper').textContent = `${(selectedMw * 165).toLocaleString('ru-RU')} п. м`;
+      document.getElementById('cfgOutDgu').textContent = `${dguUnits} ед. + ГПП ${subMva}`;
+      document.getElementById('cfgOutTime').textContent = `${selectedMw <= 16 ? 12 : (selectedMw === 32 ? 14 : 16)} месяцев`;
+    }
+  </script>
+</body>
+</html>
