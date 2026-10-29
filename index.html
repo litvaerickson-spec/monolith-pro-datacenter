@@ -1027,6 +1027,19 @@
       box-shadow: 0 32px 72px rgba(22, 21, 20, 0.10);
     }
 
+        .choice-grid-2 {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .config-summary-card {
+      background: var(--bg-stone);
+      border: 1px solid var(--border-strong);
+      border-radius: 26px;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
     .choice-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -1105,7 +1118,7 @@
        ================================================================= */
     @media (max-width: 1024px) {
       .site-header {
-        padding: 0 18px;
+        padding: 0 16px;
       }
       .nav-links {
         display: none;
@@ -1115,6 +1128,8 @@
       }
       .container {
         padding: 0 16px;
+        width: 100%;
+        max-width: 100vw;
       }
       .daylight-vignette {
         background: linear-gradient(
@@ -1128,7 +1143,6 @@
       .hud-3d-callout {
         display: none;
       }
-      /* Push Hero & Story cards below top 42vh so 3D Campus is always visible */
       .hero-screen {
         padding-top: 44vh;
         padding-bottom: 48px;
@@ -1169,7 +1183,7 @@
       }
       .timelapse-dock {
         bottom: 10px;
-        width: calc(100vw - 24px);
+        width: calc(100vw - 20px);
         padding: 10px 14px;
       }
       .choice-grid {
@@ -1177,6 +1191,239 @@
       }
       .project-specs {
         grid-template-columns: repeat(2, 1fr);
+      }
+      .ceo-signature-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 18px 16px;
+      }
+      .signature-svg-wrap {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .ceo-signature-svg {
+        width: min(210px, calc(100% - 76px));
+        height: auto;
+        max-height: 64px;
+      }
+      .official-seal {
+        width: 64px;
+        height: 64px;
+        flex-shrink: 0;
+      }
+      .qc-pill-bar {
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .site-header {
+        height: 56px;
+        padding: 0 12px;
+      }
+      .brand {
+        font-size: 13.5px;
+      }
+      .brand .brand-sub-text {
+        display: none;
+      }
+      .header-cta {
+        display: none;
+      }
+      .mobile-menu-btn {
+        padding: 6px 10px;
+      }
+      .container {
+        padding: 0 12px;
+      }
+      .hero-card,
+      .editorial-sheet,
+      .config-modal {
+        padding: 20px 14px;
+        border-radius: 20px;
+      }
+      .display-h1 {
+        font-size: clamp(26px, 7.5vw, 36px);
+        line-height: 1.1;
+      }
+      .display-h2 {
+        font-size: clamp(21px, 6vw, 28px);
+        line-height: 1.15;
+      }
+      .lead-text {
+        font-size: 14.5px;
+        line-height: 1.55;
+      }
+      .eyebrow {
+        font-size: 9.5px;
+        padding: 5px 10px;
+        line-height: 1.35;
+        white-space: normal;
+      }
+      .hero-actions {
+        flex-direction: column;
+        gap: 10px;
+        margin: 20px 0 24px;
+      }
+      .btn-primary,
+      .btn-secondary {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+        padding: 13px 16px;
+        font-size: 13px;
+      }
+      .hero-kpi-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        padding-top: 18px;
+      }
+      .kpi-cell {
+        padding: 10px 12px;
+        border-radius: 14px;
+      }
+      .kpi-num {
+        font-size: 18px;
+      }
+      .kpi-caption {
+        font-size: 10.5px;
+      }
+      .ceo-quote-Pull {
+        font-size: 19px;
+        padding-left: 14px;
+        margin-bottom: 18px;
+      }
+      .ceo-paragraphs {
+        font-size: 14px;
+        line-height: 1.6;
+        gap: 14px;
+        margin-bottom: 20px;
+      }
+      .ceo-portrait-card {
+        padding: 18px 14px;
+        border-radius: 20px;
+      }
+      .ceo-avatar-graphic {
+        height: 170px;
+        padding: 16px;
+      }
+      .charter-card {
+        padding: 18px 14px;
+        border-radius: 18px;
+      }
+      .story-step {
+        padding: 42vh 10px 20px;
+      }
+      .story-card {
+        padding: 18px 14px;
+        border-radius: 18px;
+      }
+      .story-p {
+        font-size: 13.5px;
+        margin-bottom: 14px;
+      }
+      .telemetry-grid {
+        gap: 6px;
+        padding-top: 14px;
+      }
+      .tel-box {
+        padding: 10px 8px;
+        border-radius: 12px;
+      }
+      .tel-val {
+        font-size: 15px;
+      }
+      .tel-lbl {
+        font-size: 10px;
+      }
+      .qc-pill-bar {
+        font-size: 9.5px;
+        padding: 8px 10px;
+      }
+      .timelapse-dock {
+        bottom: 8px;
+        width: calc(100vw - 16px);
+        padding: 8px 10px 10px;
+      }
+      .dock-top-row {
+        font-size: 10px;
+      }
+      .project-card {
+        border-radius: 20px;
+      }
+      .project-visual {
+        height: 170px;
+      }
+      .project-tier-badge {
+        top: 10px;
+        left: 10px;
+        font-size: 9px;
+        padding: 4px 8px;
+      }
+      .project-year-badge {
+        top: auto;
+        bottom: 10px;
+        right: 10px;
+        font-size: 9px;
+        padding: 4px 8px;
+      }
+      .project-body {
+        padding: 18px 14px;
+      }
+      .project-title {
+        font-size: 18px;
+      }
+      .project-specs {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+      .p-spec-val {
+        font-size: 13px;
+      }
+      .p-spec-lbl {
+        font-size: 10px;
+      }
+      .partner-box {
+        padding: 16px 14px;
+        border-radius: 18px;
+        min-height: auto;
+      }
+      .partner-name {
+        font-size: 17px;
+      }
+      .choice-grid-2 {
+        grid-template-columns: 1fr;
+      }
+      .choice-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+      }
+      .choice-btn {
+        padding: 11px 6px;
+        border-radius: 12px;
+      }
+      .choice-btn strong {
+        font-size: 14px;
+      }
+      .choice-btn span {
+        font-size: 10px;
+      }
+      .config-summary-card {
+        padding: 20px 14px;
+        border-radius: 20px;
+      }
+      footer.corp-footer {
+        padding: 28px 16px;
+      }
+      .footer-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
       }
     }
   </style>
@@ -1195,7 +1442,7 @@
   <header class="site-header">
     <a href="#hero" class="brand">
       <span class="brand-mark"></span>
-      <span>MONOLITH PRO • ЦОД ПОД КЛЮЧ</span>
+      <span>MONOLITH PRO</span><span class="brand-sub-text">• ЦОД ПОД КЛЮЧ</span>
     </a>
     <ul class="nav-links">
       <li><a href="#hero">Флагманский кампус</a></li>
@@ -1956,7 +2203,7 @@
             </div>
 
             <div style="font-size:12px; font-weight:700; color:var(--ink-secondary);">2. ИНЖЕНЕРНАЯ СХЕМА ОХЛАЖДЕНИЯ:</div>
-            <div class="choice-grid" style="grid-template-columns:1fr 1fr;" id="coolButtons">
+            <div class="choice-grid choice-grid-2" id="coolButtons">
               <button class="choice-btn active" onclick="setCfgCool('air', this)">
                 <strong>Фрикулинг Чиллер N+2</strong><span>До 20&nbsp;кВт/стойка • PUE 1,14</span>
               </button>
@@ -1966,7 +2213,7 @@
             </div>
           </div>
 
-          <div style="background:var(--bg-stone); border:1px solid var(--border-strong); border-radius:26px; padding:30px; display:flex; flex-direction:column; justify-content:space-between;">
+          <div class="config-summary-card">
             <div>
               <div style="font-family:var(--font-mono); font-size:11px; font-weight:600; color:var(--accent-copper); margin-bottom:6px;">
                 ВЕДОМОСТЬ ФИЗИЧЕСКИХ ОБЪЕМОВ EPC
@@ -2593,8 +2840,8 @@
         btns.forEach((b, i) => b.classList.toggle('active', i === phaseIdx));
 
         const day = Math.max(1, Math.min(365, Math.round(1 + rawP * 364)));
-        document.getElementById('dockDayText').textContent =
-          `ДЕНЬ ${String(day).padStart(3, '0')} / 365 • 8-ЭТАПНЫЙ 3D-ТАЙМЛАПС СТРОИТЕЛЬСТВА`;
+        const dayPrefix = isMobileViewport ? `ДЕНЬ ${String(day).padStart(3, '0')} / 365` : `ДЕНЬ ${String(day).padStart(3, '0')} / 365 • 8-ЭТАПНЫЙ 3D-ТАЙМЛАПС СТРОИТЕЛЬСТВА`;
+        document.getElementById('dockDayText').textContent = dayPrefix;
         document.getElementById('dockPercentText').textContent =
           `ГОТОВНОСТЬ СМР: ${Math.round(rawP * 100)}%`;
         document.getElementById('dockProgressBar').style.width = `${(rawP * 100).toFixed(1)}%`;
